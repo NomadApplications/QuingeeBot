@@ -6,12 +6,23 @@ module.exports.begin = async function(){
         }
     })
 
+
+
     client.ws.on("INTERACTION_CREATE", async interaction => {
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
 
         if(command === "help"){
-            reply(interaction, "To see all commands, just type a single **/**");
+            const commands = await getApp(guildID).commands.get();
+            const embed = new Discord.MessageEmbed()
+                .setTitle("Quingee Help")
+                .setDescription("All commands for the Quingee bot")
+                .setColor(color);
+
+            for(let i = 0; i < commands.length; i++){
+                embed.addField(`/${commands[i].name}`, `${commands[i].description}`);
+            }
+            reply(interaction, embed);
         }
     });
 }

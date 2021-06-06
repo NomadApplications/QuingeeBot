@@ -1,5 +1,7 @@
 require("./globals");
 
+// WHATS GOOOOD SIMON!?!?!?!?!?! CAN YOU SEE THIS BRO
+
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.username}`);
 
@@ -10,6 +12,7 @@ client.on("ready", () => {
     main_slash_commands.begin();
 
     economy_slash_commands.begin();
+    economy_manager.begin();
     economy_commands.startCommands();
 })
 
@@ -22,15 +25,30 @@ function initCommands(){
         return app;
     }
 
-    global.reply = (interaction, response) => {
+    global.reply = async (interaction, response) => {
+        let data = {
+            content: response
+        }
+
+        if(typeof response === "object"){
+            data = await createAPIMessage(interaction, response);
+        }
+
         client.api.interactions(interaction.id, interaction.token).callback.post({
             data: {
                 type: 4,
-                data: {
-                    content: response
-                },
+                data,
             },
         });
+    }
+
+    global.createAPIMessage = async (interaction, content) => {
+        const { data, files } = await Discord.APIMessage.create(
+            client.channels.resolve(interaction.channel_id),
+            content
+        ).resolveData().resolveFiles();
+
+        return { ...data, files }
     }
 }
 client.login(process.env.TOKEN);
