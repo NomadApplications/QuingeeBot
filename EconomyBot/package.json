@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "discord-buttons": "^3.1.1",
     "dotenv": "^10.0.0"
   }
 }

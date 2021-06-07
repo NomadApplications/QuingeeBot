@@ -1,6 +1,5 @@
 global.Discord = require("discord.js");
 global.client = new Discord.Client();
-global.buttons = require("discord-buttons")(client);
 
 global.dotenv = require("dotenv").config();
 

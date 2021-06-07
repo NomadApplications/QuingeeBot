@@ -16,6 +16,28 @@ client.on("ready", async () => {
     await economy_commands.startCommands();
 })
 
+const disbut = require("discord-buttons")(client);
+
+client.on("message", message => {
+    if(message.content === "!test"){
+        let deny = new disbut.MessageButton()
+            .setLabel("Deny")
+            .setStyle("red")
+            .setEmoji("⛔")
+            .setID("deny");
+        let confirm = new disbut.MessageButton()
+            .setLabel("Confirm")
+            .setStyle("green")
+            .setEmoji("✅")
+            .setID("confirm");
+        let buttonRow = new disbut.MessageActionRow()
+            .addComponent(deny)
+            .addComponent(confirm);
+
+        message.channel.send("Here is a thingy", {component: buttonRow});
+    }
+})
+
 function initCommands(){
     global.commands = client.api.applications(client.user.id).guilds(guildID);
 

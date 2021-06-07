@@ -54,11 +54,12 @@ module.exports.startCommands = async function(){
                     await replyError(interaction, "You need to specify a profile name.");
                     return;
                 }
+                /*
                 if(!db.get(user.id + ".profiles")[args.name]){
                     await replyError(interaction, "That is not a valid profile name. To see all of your profiles, type /profile list");
                     return;
-                }
-                const profile = db.get(user.id + ".profiles")[args.name];
+                } */
+                //const profile = db.get(user.id + ".profiles")[args.name];
 
                 //db.set(user.id + ".profiles", db.get(user.id + ".profiles").filter(p => p !== profile));
 
@@ -78,7 +79,8 @@ module.exports.startCommands = async function(){
                     .setTitle("Quingee")
                     .setDescription("Confirmation")
                     .setColor(defaultColor);
-                
+
+                reply(interaction, cancel);
             } else {
                 await replyError(interaction, "You must mention a valid option [create, remove, list].");
             }
