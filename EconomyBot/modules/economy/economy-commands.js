@@ -62,7 +62,23 @@ module.exports.startCommands = async function(){
 
                 //db.set(user.id + ".profiles", db.get(user.id + ".profiles").filter(p => p !== profile));
 
-                await replySuccess(interaction, "Successfully removed " + profile.title + " from your ")
+                let cancel = new buttons.MessageButton()
+                    .setStyle("red")
+                    .setLabel("Cancel")
+                    .setID("deny_deletion")
+                    .setDisabled();
+
+                let button = new buttons.MessageButton()
+                    .setStyle("green")
+                    .setLabel("Confirm")
+                    .setID("confirm_deletion")
+                    .setDisabled();
+
+                const embed = new Discord.MessageEmbed()
+                    .setTitle("Quingee")
+                    .setDescription("Confirmation")
+                    .setColor(defaultColor);
+                
             } else {
                 await replyError(interaction, "You must mention a valid option [create, remove, list].");
             }
