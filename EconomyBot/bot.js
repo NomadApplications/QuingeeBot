@@ -16,7 +16,6 @@ client.on("ready", async () => {
     await economy_commands.startCommands();
 })
 
-const disbut = require("discord-buttons")(client);
 
 client.on("message", message => {
     if(message.content === "!test"){

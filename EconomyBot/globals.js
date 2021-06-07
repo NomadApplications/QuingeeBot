@@ -1,13 +1,16 @@
 global.Discord = require("discord.js");
 global.client = new Discord.Client();
 
-global.dotenv = require("dotenv").config();
+global.dotenv = require('dotenv').config();
 
 global.db = require("quick.db");
 
 global.color = "#4be045";
 global.defaultColor = "#ffeded"
 global.errorColor = "#EF2813";
+
+require('discord-buttons')(client);
+global.disbut = require('discord-buttons');
 
 // Economy
 

@@ -1,0 +1,25 @@
+{
+  "name": "quigeebot",
+  "version": "1.0.0",
+  "description": "Bot for knova",
+  "main": "EconomyBot/bot.js",
+  "scripts": {
+    "start": "npm start EconomyBot/bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NomadApplications/QuigeeBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NomadApplications/QuigeeBot/issues"
+  },
+  "homepage": "https://github.com/NomadApplications/QuigeeBot#readme",
+  "dependencies": {
+    "discord-buttons": "^3.1.1",
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "quick.db": "^7.1.3"
+  }
+}
