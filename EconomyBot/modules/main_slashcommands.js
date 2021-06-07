@@ -1,4 +1,4 @@
-module.exports.begin = async function(){
+module.exports.init = async function(){
     await getApp(guildID).commands.post({
         data: {
             name: "help",
@@ -17,7 +17,7 @@ module.exports.begin = async function(){
             const embed = new Discord.MessageEmbed()
                 .setTitle("Quingee Help")
                 .setDescription("All commands for the Quingee bot")
-                .setColor(color);
+                .setColor(defaultColor);
 
             for(let i = 0; i < commands.length; i++){
                 embed.addField(`/${commands[i].name}`, `${commands[i].description}`);

@@ -1,4 +1,4 @@
-module.exports.begin = async function(){
+module.exports.init = async function(){
     await getApp(guildID).commands.post({
         data: {
             name: "balance",
@@ -7,7 +7,7 @@ module.exports.begin = async function(){
                 {
                     name: "name",
                     description: "Who's balance you would like to get.",
-                    required: true,
+                    required: false,
                     type: 3,
                 },
                 {
@@ -20,21 +20,24 @@ module.exports.begin = async function(){
         }
     })
 
-    client.ws.on("INTERACTION_CREATE", async (interaction) => {
-        const command = interaction.data.name.toLowerCase();
-        const { name, options } = interaction.data;
-
-        const args = {};
-
-        if(options){
-            for(const option of options){
-                const { name, value } = option;
-                args[name] = value;
-            }
-        }
-
-        if(command === "balance") {
-
+    await getApp(guildID).commands.post({
+        data: {
+            name: "profile",
+            description: "Manage your profiles",
+            options: [
+                {
+                    name: "type",
+                    description: "What kind of function you would like to use. [create, remove, list]",
+                    required: true,
+                    type: 3,
+                },
+                {
+                    name: "name",
+                    description: "Name of the profile you would like to create.",
+                    required: false,
+                    type: 3,
+                }
+            ]
         }
     })
 }

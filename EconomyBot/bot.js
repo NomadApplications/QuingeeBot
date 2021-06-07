@@ -1,19 +1,19 @@
 require("./globals");
 
-// WHATS GOOOOD SIMON!?!?!?!?!?! CAN YOU SEE THIS BRO
-
-client.on("ready", () => {
+client.on("ready", async () => {
     console.log(`Logged in as ${client.user.username}`);
 
     client.user.setActivity("/help", {type: "WATCHING"} )
 
     initCommands();
 
-    main_slash_commands.begin();
+    await main_slash_commands.init();
 
-    economy_slash_commands.begin();
-    economy_manager.begin();
-    economy_commands.startCommands();
+    await join_leave.startEvent();
+
+    await economy_slash_commands.init();
+    await economy_manager.init();
+    await economy_commands.startCommands();
 })
 
 function initCommands(){
@@ -42,6 +42,24 @@ function initCommands(){
         });
     }
 
+    global.replyError = async (interaction, response) => {
+        const embed = new Discord.MessageEmbed()
+            .setTitle("Quingee")
+            .setColor(errorColor)
+            .setDescription(response);
+
+        await reply(interaction, embed);
+    }
+
+    global.replySuccess = async (interaction, response) => {
+        const embed = new Discord.MessageEmbed()
+            .setTitle("Quingee")
+            .setColor(color)
+            .setDescription(response);
+
+        await reply(interaction, embed);
+    }
+
     global.createAPIMessage = async (interaction, content) => {
         const { data, files } = await Discord.APIMessage.create(
             client.channels.resolve(interaction.channel_id),
@@ -51,4 +69,5 @@ function initCommands(){
         return { ...data, files }
     }
 }
+
 client.login(process.env.TOKEN);
