@@ -3,7 +3,7 @@ require("./globals");
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user.username}`);
 
-    client.user.setActivity("/help", {type: "WATCHING"} )
+    client.user.setActivity("/help", {type: "WATCHING"})
 
     initCommands();
 
@@ -20,7 +20,7 @@ client.on("ready", async () => {
 
 
 client.on("message", message => {
-    if(message.content === "!test"){
+    if (message.content === "!test") {
         let deny = new disbut.MessageButton()
             .setLabel("Deny")
             .setStyle("red")
@@ -39,12 +39,12 @@ client.on("message", message => {
     }
 })
 
-function initCommands(){
+function initCommands() {
     global.commands = client.api.applications(client.user.id).guilds(guildID);
 
     global.getApp = (guildID) => {
         const app = client.api.applications(client.user.id);
-        if(guildID) app.guilds(guildID);
+        if (guildID) app.guilds(guildID);
         return app;
     }
 
@@ -53,7 +53,7 @@ function initCommands(){
             content: response
         }
 
-        if(typeof response === "object"){
+        if (typeof response === "object") {
             data = await createAPIMessage(interaction, response);
         }
 
@@ -84,12 +84,12 @@ function initCommands(){
     }
 
     global.createAPIMessage = async (interaction, content) => {
-        const { data, files } = await Discord.APIMessage.create(
+        const {data, files} = await Discord.APIMessage.create(
             client.channels.resolve(interaction.channel_id),
             content
         ).resolveData().resolveFiles();
 
-        return { ...data, files }
+        return {...data, files}
     }
 }
 

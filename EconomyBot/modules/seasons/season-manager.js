@@ -16,6 +16,10 @@ module.exports.init = async function(){
 }
 
 const s = schedule.scheduleJob({hour: 0, minute: 0}, function () {
+    newDay();
+})
+
+global.newDay = function(){
     if(db.get("seasons") === null){
         db.set("seasons", {currentDay: 1, currentSeason: seasons.spring1});
     }
@@ -60,4 +64,4 @@ const s = schedule.scheduleJob({hour: 0, minute: 0}, function () {
                 break;
         }
     }
-})
+}

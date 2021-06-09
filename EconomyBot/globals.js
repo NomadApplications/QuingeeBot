@@ -42,6 +42,8 @@ global.economy_slash_commands = require("./modules/economy/slashcommands");
 //Seasons
 
 global.season_manager = require("./modules/seasons/season-manager");
+global.season_commands = require("./modules/seasons/season-commands");
+global.season_slash_commands = require("./modules/seasons/slashcommands");
 
 global.enum = require("./modules/enum");
 
