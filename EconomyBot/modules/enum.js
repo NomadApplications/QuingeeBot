@@ -1,4 +1,4 @@
-let Enum = function() {
+let Enum = function () {
     let self = this;
     let symbolToName = new Map();
     let names = new Set(arguments);
@@ -13,14 +13,14 @@ let Enum = function() {
         argumentsArray.toString();
     }
 
-    for(let name of names) {
+    for (let name of names) {
         if (typeof name !== 'string') throw "Name " + name.toString() +
         ' is of type ' + typeof name + ' but string is expected';
         let sym = Symbol(name);
 
         Object.defineProperty(this, name, {
             enumerable: true,
-            writable:false,
+            writable: false,
             configurable: false,
             value: sym
         });
@@ -30,15 +30,15 @@ let Enum = function() {
 
     self.size = names.size;
 
-    self.values = function() {
+    self.values = function () {
         let values = [];
-        for(let value of symbolToName.keys()) {
+        for (let value of symbolToName.keys()) {
             values.push(value.toString());
         }
         return values
     };
 
-    self.getName = function(sym) {
+    self.getName = function (sym) {
         if (typeof sym !== 'symbol') throw "Argument " + sym.toString() +
         ' is of type ' + typeof sym + ' but symbol is expected';
         if (!symbolToName.get(sym)) {
@@ -47,19 +47,19 @@ let Enum = function() {
         return symbolToName.get(sym);
     };
 
-    self.toString = function() {
+    self.toString = function () {
         let names = [];
-        for(let name of symbolToName.values()) {
+        for (let name of symbolToName.values()) {
             names.push(name);
         }
         return names.toString();
     };
 
-    self.valueOf = function(name) {
+    self.valueOf = function (name) {
         if (typeof name !== 'string') throw "Argument " + name.toString() +
         ' is of type ' + typeof name + ' but string is expected';
         let names = [];
-        for(let key of symbolToName.keys()) {
+        for (let key of symbolToName.keys()) {
             if (symbolToName.get(key) == name) {
                 return key;
             }
