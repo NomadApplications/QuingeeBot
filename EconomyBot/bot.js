@@ -14,6 +14,8 @@ client.on("ready", async () => {
     await economy_slash_commands.init();
     await economy_manager.init();
     await economy_commands.startCommands();
+
+    await season_manager.init();
 })
 
 

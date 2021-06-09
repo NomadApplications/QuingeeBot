@@ -9,6 +9,8 @@ module.exports.init = async function(){
 
 
     client.ws.on("INTERACTION_CREATE", async interaction => {
+        if(interaction.type === 3) return;
+
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
 

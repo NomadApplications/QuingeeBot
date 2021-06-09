@@ -27,13 +27,13 @@ module.exports.init = async function(){
             options: [
                 {
                     name: "type",
-                    description: "What kind of function you would like to use. [create, remove, list]",
+                    description: "What kind of function you would like to use. [create, list]",
                     required: true,
                     type: 3,
                 },
                 {
                     name: "name",
-                    description: "Name of the profile you would like to create.",
+                    description: "Name of the profile.",
                     required: false,
                     type: 3,
                 }
