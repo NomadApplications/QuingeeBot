@@ -111,6 +111,8 @@ module.exports.startCommands = async function () {
             } else {
                 await replyError(interaction, "You must mention a valid option [create, list].");
             }
+        } else if (command == "daily"){
+            if(!db.get(user.id)) initUser(user);
         }
     })
 

@@ -16,27 +16,12 @@ client.on("ready", async () => {
     await economy_commands.startCommands();
 
     await season_manager.init();
+    await season_commands.startCommands();
+    await season_slash_commands.init();
 })
 
-
 client.on("message", message => {
-    if (message.content === "!test") {
-        let deny = new disbut.MessageButton()
-            .setLabel("Deny")
-            .setStyle("red")
-            .setEmoji("⛔")
-            .setID("deny");
-        let confirm = new disbut.MessageButton()
-            .setLabel("Confirm")
-            .setStyle("green")
-            .setEmoji("✅")
-            .setID("confirm");
-        let buttonRow = new disbut.MessageActionRow()
-            .addComponent(deny)
-            .addComponent(confirm);
-
-        message.channel.send("Here is a thingy", {component: buttonRow});
-    }
+    const args = message.content.split(" ").map(arg => arg.toLowerCase());
 })
 
 function initCommands() {
@@ -77,7 +62,7 @@ function initCommands() {
     global.replySuccess = async (interaction, response) => {
         const embed = new Discord.MessageEmbed()
             .setTitle("Quingee")
-            .setColor(color)
+            .setColor(successColor)
             .setDescription(response);
 
         await reply(interaction, embed);

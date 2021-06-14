@@ -1,14 +1,12 @@
-const enumValue = (name) => Object.freeze({toString: () => name});
-
 global.seasons = Object.freeze({
-    spring1: "Spring1",
-    spring2: "Spring2",
-    summer1: "Summer1",
-    summer2: "Summer2",
-    fall1: "Fall1",
-    fall2: "Fall2",
-    winter1: "Winter1",
-    winter2: "Winter2"
+    spring1: "🌷 Spring 1",
+    spring2: "🌷 Spring 2",
+    summer1: "☀ Summer 1",
+    summer2: "☀ Summer 2",
+    fall1: "🍁 Fall 1",
+    fall2: "🍁 Fall 2",
+    winter1: "❄ Winter 1",
+    winter2: "❄ Winter 2"
 });
 
 module.exports.init = async function(){
@@ -19,13 +17,17 @@ const s = schedule.scheduleJob({hour: 0, minute: 0}, function () {
     newDay();
 })
 
+global.initSeasons = function(){
+    db.set("seasons", {currentDay: 1, currentSeason: seasons.spring1});
+}
+
 global.newDay = function(){
     if(db.get("seasons") === null){
-        db.set("seasons", {currentDay: 1, currentSeason: seasons.spring1});
+        initSeasons();
     }
     db.add("seasons.currentDay", 1);
 
-    if(db.get("seasons.currentDay") === 48){
+    if(db.get("seasons.currentDay") === seasonLength){
         let announcementChannel = client.guilds.cache.get(guildID).channels.cache.get(announcementChannelID);
 
         db.set("seasons.currentDay", 1);

@@ -1,0 +1,60 @@
+{
+  "websiteURL": "<https://google.com/>",
+  "colors": {
+    "successColor": "#4be045",
+    "defaultColor": "#ffeded",
+    "errorColor": "#EF2813",
+    "currencyColor": "#ffb624"
+  },
+  "ids": {
+    "guildID": "846413849351290962",
+    "welcomeID": "850811108025171969",
+    "rulesChannelID": "851330725990760468",
+    "announcementChannelID": "852219497300754505"
+  },
+  "calendar": {
+    "monthLength": 24,
+    "seasonLength": 48,
+    "seasonEvents": [
+      {
+        "eventTitle": "Harvest Festival",
+        "eventSeason": "Spring 1",
+        "announcementMessage": "It's the Harvest Festival y'all!"
+      },
+      {
+        "eventTitle": "Winter Reading",
+        "eventSeason": "Winter 2",
+        "announcementMessage:": "We made it to Winter 2! Get ready for some reading!"
+      }
+    ]
+  },
+  "economy": {
+    "maximumProfiles": 3,
+    "startingCurrency": 10,
+    "startingProfileName": "Main",
+    "name": "Gald",
+    "daily": {
+      "min": 50,
+      "max": 150
+    }
+  },
+  "homesteads": {
+    "maximumHouses": 10,
+    "daily": {
+      "min": 50,
+      "max": 150
+    }
+  },
+  "items": {
+    "crafting_recipes": [
+      {
+        "item1": "wood",
+        "item2": "wood",
+        "recieve": "chair"
+      }
+    ],
+    "items": [
+      "wood"
+    ]
+  }
+}

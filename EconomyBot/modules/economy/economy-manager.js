@@ -27,15 +27,20 @@ global.addNewProfile = function(profile){
 }
 
 class EcoProfile {
-    constructor(currencyAmount = startingCurrency, inventory = [], title, o){
+    constructor(currencyAmount = startingCurrency, inventory = [], node_slots, title, o){
         this.currencyAmount = currencyAmount;
         this.inventory = inventory;
+        this.node_slots = node_slots;
         this.title = title;
         this.o = o;
     }
 
     setName(title){
         this.title = title;
+    }
+
+    addNode(){
+        this.node_slots++;
     }
 }
 global.EcoProfile = EcoProfile;

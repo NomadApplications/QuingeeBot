@@ -22,6 +22,13 @@ module.exports.init = async function(){
 
     await getApp(guildID).commands.post({
         data: {
+            name: "daily",
+            description: "Get your daily rewards."
+        }
+    })
+
+    await getApp(guildID).commands.post({
+        data: {
             name: "profile",
             description: "Manage your profiles",
             options: [
