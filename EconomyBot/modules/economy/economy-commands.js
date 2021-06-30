@@ -25,9 +25,11 @@ module.exports.startCommands = async function () {
 
             if (!args.name) {
                 const profile = db.get(user.id + ".profiles")[0];
-                const balance = profile.currencyAmount;
+                let balance = profile.currencyAmount;
 
-                await replyCurrency(interaction, `${profile.o.username} currently has ${balance} ${currencyName}`);
+                if(balance === null) balance = 0;
+
+                await replyCurrency(interaction, `${channel.guild.users.cache.get(profile.owner).username} currently has ${balance} ${currencyName}`);
 
                 return;
             }
@@ -47,12 +49,11 @@ module.exports.startCommands = async function () {
             }
 
             if (!args.profile) {
-                console.log("TEST");
 
-                const profile = db.get(mentionedUser.id + ".profiles")[0];
+                const profile = db.get(mentionedUserID + ".profiles")[0];
                 const balance = profile.currencyAmount;
 
-                await replyCurrency(interaction, `${profile.o.username} currently has ${balance} ${currencyName}`);
+                await replyCurrency(interaction, `${profile.owner.username} currently has ${balance} ${currencyName}`);
 
                 return;
             }
@@ -74,7 +75,7 @@ module.exports.startCommands = async function () {
 
             const balance = profile.currencyAmount;
 
-            await replyCurrency(interaction, `${profile.o.username}'s ${profile.title} profile currently has ${balance} ${currencyName}`);
+            await replyCurrency(interaction, `${profile.owner.username} currently has ${balance} ${currencyName} in ${profile.title}`);
         } else if (command === "profile") {
             if (!db.get(user.id + ".profiles")) {
                 initUser(user);
@@ -86,13 +87,13 @@ module.exports.startCommands = async function () {
                 }
                 let profileName = "Profile" + db.get(user.id + ".profiles").length;
                 if (!args.name) {
-                    const profile = new EcoProfile(startingCurrency, [], profileName, user);
-                    addNewProfile(profile);
+                    const profile = new EcoProfile(0, [], 1, profileName, user);
+                    addNewProfile(user, profile);
                     await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
                     return;
                 }
                 profileName = args.name;
-                const profile = new EcoProfile(startingCurrency, [], profileName, user);
+                const profile = new EcoProfile(0, [], 1, profileName, user);
                 addNewProfile(profile);
                 await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
             } else if (args.type === "list") {
@@ -113,6 +114,30 @@ module.exports.startCommands = async function () {
             }
         } else if (command == "daily"){
             if(!db.get(user.id)) initUser(user);
+
+            const dailyReward = getRandom(minDailyReward, maxDailyReward, 0);
+
+            let addedTo = [];
+
+            for(let i = 0; i < db.get(user.id + ".profiles").length; i++){
+                const currentProfile = db.get(user.id + ".profiles")[i];
+                if(currentProfile.node_slots === 0) continue;
+                for(let j = 0; j < currentProfile.node_slots; i++){
+                    currentProfile.currencyAmount += dailyReward;
+                    addedTo.push(currentProfile);
+                }
+            }
+
+            const embed = new Discord.MessageEmbed()
+                .setTitle("Quingee")
+                .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
+                .setColor(currencyColor);
+
+            for(let i = 0; i < addedTo.length; i++){
+                embed.addField(addedTo[i].title, "Node slots: " + addedTo[i].node_slots + ".\nCurrent Currency: " + addedTo[i].currencyAmount, true);
+            }
+
+            reply(interaction, embed);
         }
     })
 

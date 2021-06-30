@@ -1,4 +1,4 @@
-const config = require("../config.json");
+const config = require("./config.json");
 
 // IMPORTS
 
@@ -10,49 +10,62 @@ global.schedule = require("node-schedule");
 
 // COLORS
 
-global.successColor = config.get("colors.successColor");
-global.defaultColor = config.get("colors.defaultColor");
-global.errorColor = config.get("colors.errorColor");
-global.currencyColor = config.get("colors.currencyColor");
+global.successColor = config.colors.successColor;
+global.defaultColor = config.colors.defaultColor;
+global.errorColor = config.colors.errorColor;
+global.currencyColor = config.colors.currencyColor;
+global.musicColor = config.colors.musicColor;
 
 require('discord-buttons')(client);
 global.disbut = require('discord-buttons');
 
 // CALENDAR
 
-global.seasonEvents = config.get("calendar.seasonEvents");
-global.seasonLength = config.get("calendar.seasonLength");
-global.monthLength = config.get("calendar.monthLength");
+global.seasonEvents = config.calendar.seasonEvents;
+global.seasonLength = config.calendar.seasonLength;
+global.monthLength = config.calendar.monthLength;
 global.season_manager = require("./modules/seasons/season-manager");
 global.season_commands = require("./modules/seasons/season-commands");
 global.season_slash_commands = require("./modules/seasons/slashcommands");
 
 // ECONOMY
 
-global.currencyName = config.get("economy.name");
-global.maximumProfiles = config.get("economy.maximumProfiles");
-global.startingCurrency = config.get("economy.startingCurrency");
-global.startingProfileName = config.get("economy.startingProfileName");
-global.minDailyReward = config.get("economy.daily.min");
-global.maxDailyReward = config.get("economy.daily.max");
+global.currencyName = config.economy.name;
+global.maximumProfiles = config.economy.maximumProfiles;
+global.startingCurrency = config.economy.startingCurrency;
+global.startingProfileName = config.economy.startingProfileName;
+global.minDailyReward = config.economy.daily.min;
+global.maxDailyReward = config.economy.daily.max;
 global.economy_manager = require("./modules/economy/economy-manager");
 global.economy_commands = require("./modules/economy/economy-commands");
 global.economy_slash_commands = require("./modules/economy/slashcommands");
 
+// MUSIC
+
+global.music_slash_commands = require("./modules/music/slashcommands");
+global.music_commands = require("./modules/music/music-commands");
+
 // IDs
 
-global.websiteURL = config.get("websiteURL");
+global.websiteURL = config.websiteURL;
 
-global.guildID = config.get("ids.guildID");
-global.welcomeID = config.get("ids.welcomeID");
-global.rulesChannelID = config.get("ids.rulesChannelID");
-global.announcementChannelID = config.get("ids.announcementChannelID");
+global.guildID = config.ids.guildID;
+global.welcomeID = config.ids.welcomeID;
+global.rulesChannelID = config.ids.rulesChannelID;
+global.announcementChannelID = config.ids.announcementChannelID;
 
 // EVENTS
 
 global.join_leave = require("./modules/join-leave");
 global.main_slash_commands = require("./modules/main_slashcommands");
 
-global.getMentionFromID = function(id) {
+global.getMentionFromID = function (id) {
     return `<@${id}>`;
+}
+
+global.getRandom = function (min, max, fractionDigits) {
+    const fractionMultiplier = Math.pow(10, fractionDigits)
+    return Math.round(
+        (Math.random() * (max - min) + min) * fractionMultiplier,
+    )
 }

@@ -3,11 +3,8 @@ module.exports.init = async function(){
 
     for(let i = 0; i < users.length; i++){
         let user = users[i];
-        if(db.get(user.id) === null) {
-            db.set(user.id, { profiles: [] });
-            const startingProfile = new EcoProfile(startingCurrency, "Main", user);
-
-            addNewProfile(startingProfile);
+        if(db.get(user) === null) {
+            initUser(user);
         }
     }
 }
@@ -16,14 +13,17 @@ module.exports.init = async function(){
 global.initUser = function(user){
     if(db.get(user.id) !== null) return;
     db.set(user.id, { profiles: [] });
-    const startingProfile = new EcoProfile(startingCurrency, [],"Main", user);
+    const startingProfile = new EcoProfile(startingCurrency, [],1, "Main", user);
+    startingProfile.addNode();
 
-    addNewProfile(startingProfile);
+    addNewProfile(user ,startingProfile);
 }
 
-global.addNewProfile = function(profile){
-    if(db.get(profile.o.id) === null) initUser(profile.o);
-    db.push(profile.o.id + ".profiles", profile);
+global.addNewProfile = function(user, profile){
+    console.log(profile);
+    if(db.get(user.id) === null) initUser(user);
+    console.log("added new profile");
+    db.push(user.id + ".profiles", profile);
 }
 
 class EcoProfile {
@@ -32,7 +32,7 @@ class EcoProfile {
         this.inventory = inventory;
         this.node_slots = node_slots;
         this.title = title;
-        this.o = o;
+        this.owner = o;
     }
 
     setName(title){

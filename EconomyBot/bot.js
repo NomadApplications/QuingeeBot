@@ -18,6 +18,9 @@ client.on("ready", async () => {
     await season_manager.init();
     await season_commands.startCommands();
     await season_slash_commands.init();
+
+    await music_slash_commands.init();
+    await music_commands.startCommands();
 })
 
 client.on("message", message => {

@@ -4,7 +4,8 @@
     "successColor": "#4be045",
     "defaultColor": "#ffeded",
     "errorColor": "#EF2813",
-    "currencyColor": "#ffb624"
+    "currencyColor": "#ffb624",
+    "musicColor": "#8813EF"
   },
   "ids": {
     "guildID": "846413849351290962",
