@@ -46,16 +46,146 @@
       "max": 150
     }
   },
-  "items": {
-    "crafting_recipes": [
-      {
-        "item1": "wood",
-        "item2": "wood",
-        "recieve": "chair"
-      }
-    ],
-    "items": [
-      "wood"
-    ]
-  }
+  "items": [
+    {
+      "name": "clay",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "trash",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "worms",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "small fish",
+      "buy": -1,
+      "sell": 2,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "fish",
+      "buy": -1,
+      "sell": 5,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "water lily",
+      "buy": -1,
+      "sell": 3,
+      "season": 2,
+      "category": "fishing"
+    },
+    {
+      "name": "special fish",
+      "buy": -1,
+      "sell": 10,
+      "season": 3,
+      "category": "fishing"
+    },
+    {
+      "name": "big fish",
+      "buy": -1,
+      "sell": 25,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "stone",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "bronze",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "iron",
+      "buy": -1,
+      "sell": 5,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "gold",
+      "buy": -1,
+      "sell": 15,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "jewel",
+      "buy": -1,
+      "sell": 75,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "goddess tear",
+      "buy": -1,
+      "sell": 500,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "flowers",
+      "buy": -1,
+      "sell": 3,
+      "season": 1,
+      "category": "mining"
+    },
+    {
+      "name": "mushrooms",
+      "buy": -1,
+      "sell": 3,
+      "season": 3,
+      "category": "mining"
+    },
+    {
+      "name": "flowers",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "wood",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "rare wood",
+      "buy": -1,
+      "sell": 35,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "flowers",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "gathering"
+    }
+  ]
 }

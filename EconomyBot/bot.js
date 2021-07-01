@@ -7,20 +7,20 @@ client.on("ready", async () => {
 
     initCommands();
 
-    await main_slash_commands.init();
+     main_slash_commands.init();
 
-    await join_leave.startEvent();
+     join_leave.startEvent();
 
-    await economy_slash_commands.init();
-    await economy_manager.init();
-    await economy_commands.startCommands();
+     economy_slash_commands.init();
+     economy_manager.init();
+     economy_commands.startCommands();
 
-    await season_manager.init();
-    await season_commands.startCommands();
-    await season_slash_commands.init();
+     season_manager.init();
+     season_commands.startCommands();
+     season_slash_commands.init();
 
-    await music_slash_commands.init();
-    await music_commands.startCommands();
+     music_slash_commands.init();
+     music_commands.startCommands();
 })
 
 client.on("message", message => {

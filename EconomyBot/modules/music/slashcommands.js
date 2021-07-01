@@ -6,7 +6,7 @@ module.exports.init = async function() {
             options: [
                 {
                     name: "function",
-                    description: "(play, skip, stop)",
+                    description: "(play, skip, stop, queue)",
                     required: true,
                     type: 3,
                 },
