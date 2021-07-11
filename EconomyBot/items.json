@@ -1,0 +1,368 @@
+{
+  "items": [
+    {
+      "name": "clay",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "trash",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "worms",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "small fish",
+      "buy": -1,
+      "sell": 2,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "fish",
+      "buy": -1,
+      "sell": 5,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "water lily",
+      "buy": -1,
+      "sell": 3,
+      "season": 2,
+      "category": "fishing"
+    },
+    {
+      "name": "special fish",
+      "buy": -1,
+      "sell": 10,
+      "season": 3,
+      "category": "fishing"
+    },
+    {
+      "name": "big fish",
+      "buy": -1,
+      "sell": 25,
+      "season": -1,
+      "category": "fishing"
+    },
+    {
+      "name": "stone",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "bronze",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "iron",
+      "buy": -1,
+      "sell": 5,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "gold",
+      "buy": -1,
+      "sell": 15,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "jewel",
+      "buy": -1,
+      "sell": 75,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "goddess tear",
+      "buy": -1,
+      "sell": 500,
+      "season": -1,
+      "category": "mining"
+    },
+    {
+      "name": "flowers",
+      "buy": -1,
+      "sell": 3,
+      "season": 1,
+      "category": "mining"
+    },
+    {
+      "name": "mushrooms",
+      "buy": -1,
+      "sell": 3,
+      "season": 3,
+      "category": "mining"
+    },
+    {
+      "name": "flowers",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "wood",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "rare wood",
+      "buy": -1,
+      "sell": 35,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "mushrooms",
+      "buy": -1,
+      "sell": 3,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "soil",
+      "buy": -1,
+      "sell": 1,
+      "season": -1,
+      "category": "gathering"
+    },
+    {
+      "name": "bamboo",
+      "buy": -1,
+      "sell": 3,
+      "season": 1,
+      "category": "gathering"
+    },
+    {
+      "name": "wild fruit",
+      "buy": -1,
+      "sell": 3,
+      "season": 2,
+      "category": "gathering"
+    },
+    {
+      "name": "acorns",
+      "buy": -1,
+      "sell": 3,
+      "season": 3,
+      "category": "gathering"
+    },
+    {
+      "name": "ice",
+      "buy": -1,
+      "sell": 3,
+      "season": 4,
+      "category": "gathering"
+    },
+    {
+      "name": "bouquet",
+      "buy": -1,
+      "sell": 50,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "wedding ring",
+      "buy": -1,
+      "sell": 750,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "cradle",
+      "buy": -1,
+      "sell": 175,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "milk",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "egg",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "honey",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "bait",
+      "buy": -1,
+      "sell": 5,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "veggies",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "fruit",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "artisan goods",
+      "buy": -1,
+      "sell": 10,
+      "season": -1,
+      "category": "crafted items"
+    },
+    {
+      "name": "bunny cow",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "quingee",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "silk moth",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "business node",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "mushroom box",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "bait box",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "grove",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "bamboo grove",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "flowerbed",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "vegetable box",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "fruit patch",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "keg",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "nectar pond",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "preserve jar",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "compost pile",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "forge",
+      "buy": -1,
+      "sell": 20,
+      "season": -1,
+      "category": "daily"
+    },
+    {
+      "name": "apple",
+      "buy": 10,
+      "sell": 5,
+      "season": -1,
+      "category": "daily"
+    }
+  ]
+}

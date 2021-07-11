@@ -22,7 +22,6 @@ global.initUser = function(user){
 global.addNewProfile = function(user, profile){
     console.log(profile);
     if(db.get(user.id) === null) initUser(user);
-    console.log("added new profile");
     db.push(user.id + ".profiles", profile);
 }
 
@@ -41,6 +40,14 @@ class EcoProfile {
 
     addNode(){
         this.node_slots++;
+    }
+
+    removeMoney(amount){
+        this.currencyAmount -= amount;
+    }
+
+    addMoney(amount){
+        this.currencyAmount += amount;
     }
 }
 global.EcoProfile = EcoProfile;

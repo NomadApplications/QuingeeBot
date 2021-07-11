@@ -146,7 +146,7 @@ module.exports.startCommands = async function () {
     });
 }
 
-async function replyCurrency(interaction, response) {
+global.replyCurrency = async (interaction, response) => {
     const embed = new Discord.MessageEmbed()
         .setTitle("Quingee")
         .setColor(currencyColor)

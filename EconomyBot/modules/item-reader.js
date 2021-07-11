@@ -1,4 +1,4 @@
-const items = new Map();
+const items = {};
 
 const fishing = [];
 const mining = [];
@@ -6,22 +6,23 @@ const gathering = [];
 const crafted_items = [];
 const daily = [];
 
-module.exports.initItems = async function(items){
-    for(let i = 0; i < items.length; i++){
-        const category = items[i].category;
+module.exports.initItems = async function(itemList){
+    for(let i = 0; i < itemList.length; i++){
+        const category = itemList[i].category;
 
-        if(category === "fishing") fishing.push(items[i]);
-        else if (category === "mining") mining.push(items[i]);
-        else if (category === "gathering") gathering.push(items[i]);
-        else if (category === "crafted items") crafted_items.push(items[i]);
-        else if (category === "daily") daily.push(items[i]);
+        if(category === "fishing") fishing.push(itemList[i]);
+        else if (category === "mining") mining.push(itemList[i]);
+        else if (category === "gathering") gathering.push(itemList[i]);
+        else if (category === "crafted items") crafted_items.push(itemList[i]);
+        else if (category === "daily") daily.push(itemList[i]);
 
-        items.set(items[i].name, {
-            buy: items[i].buy,
-            sell: items[i].sell,
-            season: items[i].season,
-            category: items[i].category
-        });
+        items[itemList[i].name] = {
+            name: itemList[i].name,
+            buy: itemList[i].buy,
+            sell: itemList[i].sell,
+            season: itemList[i].season,
+            category: itemList[i].category
+        };
     }
 }
 
@@ -39,9 +40,18 @@ global.giveItemByName = (user, name) => {
     return true;
 }
 
-global.giveItem = (user, item) => {
+global.giveItem = (profile, item) => {
     if(item === null) return false;
 
-    db.get(user.id + ".profiles")[0].inventory.push(item);
+    profile.inventory.push(item);
+    console.log(profile.currencyAmount);
+    profile.currencyAmount -= item.buy;
+    console.log(profile.currencyAmount);
     return true;
 }
+
+global.getAllItems = () => {
+    return items;
+}
+
+global.getItemByIndex = (i) => items[Object.keys(items)[i]];

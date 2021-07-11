@@ -1,4 +1,5 @@
 const config = require("./config.json");
+const itemConfig = require("./items.json");
 
 // IMPORTS
 
@@ -18,6 +19,17 @@ global.musicColor = config.colors.musicColor;
 
 require('discord-buttons')(client);
 global.disbut = require('discord-buttons');
+
+// ITEMS
+
+global.items = itemConfig.items;
+global.itemReader = require("./modules/item-reader");
+
+// SHOPS
+
+global.shop_slash_commands = require("./modules/shop/slashcommands");
+global.shop_commands = require("./modules/shop/shop-commands");
+global.itemsPerPage = config.economy.shopItemsPerPage;
 
 // CALENDAR
 
@@ -68,4 +80,25 @@ global.getRandom = function (min, max, fractionDigits) {
     return Math.round(
         (Math.random() * (max - min) + min) * fractionMultiplier,
     )
+}
+
+global.capitalize = function(string){
+    const lower = string.toLowerCase();
+    const sentence = lower.split(" ");
+
+    let final = "";
+
+    for(let i = 0; i < sentence.length; i++){
+        const first = sentence[i].charAt(0);
+        const upper = first.toUpperCase();
+        const sliced = sentence[i].slice(1);
+
+        if(i === sentence.length -1){
+            final += upper + sliced;
+        } else {
+            final += upper + sliced + " ";
+        }
+    }
+
+    return final;
 }

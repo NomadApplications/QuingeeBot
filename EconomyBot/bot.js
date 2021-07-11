@@ -7,20 +7,28 @@ client.on("ready", async () => {
 
     initCommands();
 
-     main_slash_commands.init();
+    itemReader.initItems(items);
 
-     join_leave.startEvent();
+    shop_slash_commands.init();
+    shop_commands.startCommands();
+    shop_commands.initPages();
 
-     economy_slash_commands.init();
-     economy_manager.init();
-     economy_commands.startCommands();
+    main_slash_commands.init();
 
-     season_manager.init();
-     season_commands.startCommands();
-     season_slash_commands.init();
+    join_leave.startEvent();
 
-     music_slash_commands.init();
-     music_commands.startCommands();
+    economy_slash_commands.init();
+    economy_manager.init();
+    economy_commands.startCommands();
+
+    season_manager.init();
+    season_commands.startCommands();
+    season_slash_commands.init();
+
+    music_slash_commands.init();
+    music_commands.startCommands();
+
+    itemReader.initItems(items);
 })
 
 client.on("message", message => {

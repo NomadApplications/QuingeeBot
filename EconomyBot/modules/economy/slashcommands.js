@@ -7,7 +7,7 @@ module.exports.init = async function(){
                 {
                     name: "name",
                     description: "Who's balance you would like to get.",
-                    required: false,
+                    required: true,
                     type: 3,
                 },
                 {
@@ -23,8 +23,16 @@ module.exports.init = async function(){
     await getApp(guildID).commands.post({
         data: {
             name: "daily",
-            description: "Get your daily rewards."
-        }
+            description: "Get your daily rewards.",
+            options: [
+                {
+                    name: "check",
+                    description: "How much time is left.",
+                    required: false,
+                    type: 3,
+                },
+            ],
+        },
     })
 
     await getApp(guildID).commands.post({
