@@ -44,9 +44,7 @@ global.giveItem = (profile, item) => {
     if(item === null) return false;
 
     profile.inventory.push(item);
-    console.log(profile.currencyAmount);
     profile.currencyAmount -= item.buy;
-    console.log(profile.currencyAmount);
     return true;
 }
 

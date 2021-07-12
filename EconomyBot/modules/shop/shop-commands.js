@@ -10,13 +10,14 @@ module.exports.initPages = async function () {
     let addedItems = 0;
 
     for (let i = 0; i < items.length; i++) {
-        if (addedItems % itemsPerPage === 0 && i !== 0) {
-            currentPage++;
-            pages.push([currentPage, []]);
+        const item = getAllItems()[items[i]];
+        if (addedItems % itemsPerPage === 0) {
+            if (item.buy === 1 && i !== 0) {
+                currentPage++;
+                pages.push([currentPage, []]);
+            }
         }
-        if (getAllItems()[items[i]].buy === 1) {
-            continue;
-        } else {
+        if (item.buy !== -1) {
             addedItems++;
             pages[currentPage][1].push(getAllItems()[items[i]]);
         }
@@ -82,7 +83,7 @@ async function handleShop(interaction, channel, user) {
 
     await reply(interaction, "Shop below:");
 
-    if(pages.length === 1){
+    if (pages.length === 1) {
         channel.send(embed);
         return;
     }
@@ -103,11 +104,11 @@ function getPage(pageNumber) {
         const category = item.category;
         let emoji = "";
 
-        if (category == "fishing") emoji = "🎣"
-        else if (category == "mining") emoji = "💎"
-        else if (category == "gathering") emoji = "🧤"
-        else if (category == "crafted items") emoji = "⚒"
-        else if (category == "daily") emoji = "☀"
+        if (category === "fishing") emoji = "🎣"
+        else if (category === "mining") emoji = "💎"
+        else if (category === "gathering") emoji = "🧤"
+        else if (category === "crafted items") emoji = "⚒"
+        else if (category === "daily") emoji = "☀"
 
         embed.addField(capitalize(item.name) + `\n *${emoji + capitalize(item.category)}*`, `*Price*: ${item.buy}`, true);
     }
@@ -130,7 +131,10 @@ function editEmbed(message, embed, pageNumber, user) {
         let p = 0;
 
 
-        embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '◀' || reaction.emoji.name == '▶'), {max: 1, time: 30000}).then(collected => {
+        embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '◀' || reaction.emoji.name == '▶'), {
+            max: 1,
+            time: 30000
+        }).then(collected => {
 
             embedMessage.reactions.removeAll();
 
