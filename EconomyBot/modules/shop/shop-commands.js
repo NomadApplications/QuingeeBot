@@ -47,6 +47,7 @@ module.exports.startCommands = async function () {
         if (command === "shop") {
             await handleShop(interaction, channel, user)
         } else if (command === "buy") {
+            if(db.get(user.id) === null) initUser(user);
             const item = getItemByName(args.item);
 
             if (item === null || item === undefined) {
@@ -60,6 +61,8 @@ module.exports.startCommands = async function () {
             }
 
             const profile = db.get(user.id + ".profiles")[0];
+            addNewProfile(user, profile);
+            console.log(db.get(user.id + ".profiles"));
 
             if (profile.currencyAmount >= item.buy) {
                 // BUY ITEM

@@ -43,8 +43,8 @@ global.giveItemByName = (user, name) => {
 global.giveItem = (profile, item) => {
     if(item === null) return false;
 
-    profile.inventory.push(item);
-    profile.currencyAmount -= item.buy;
+    addItemToProfile(profile, item);
+    removeCurrency(profile, item.buy);
     return true;
 }
 
