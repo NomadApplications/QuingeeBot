@@ -1,29 +1,33 @@
 const items = {};
 
-const fishing = [];
-const mining = [];
-const gathering = [];
-const crafted_items = [];
-const daily = [];
+global.fishing = {};
+global.mining = {};
+global.gathering = {};
+global.crafted_items = {};
+global.daily = {};
 
 module.exports.initItems = async function(itemList){
     for(let i = 0; i < itemList.length; i++){
         const category = itemList[i].category;
 
-        if(category === "fishing") fishing.push(itemList[i]);
-        else if (category === "mining") mining.push(itemList[i]);
-        else if (category === "gathering") gathering.push(itemList[i]);
-        else if (category === "crafted items") crafted_items.push(itemList[i]);
-        else if (category === "daily") daily.push(itemList[i]);
+        if(category === "fishing") addItemToObject(fishing, itemList[i]);
+        else if (category === "mining") addItemToObject(mining, itemList[i]);
+        else if (category === "gathering") addItemToObject(gathering, itemList[i]);
+        else if (category === "crafted items") addItemToObject(crafted_items, itemList[i]);
+        else if (category === "daily") addItemToObject(daily, itemList[i]);
 
-        items[itemList[i].name] = {
-            name: itemList[i].name,
-            buy: itemList[i].buy,
-            sell: itemList[i].sell,
-            season: itemList[i].season,
-            category: itemList[i].category
-        };
+        addItemToObject(items, itemList[i]);
     }
+}
+
+function addItemToObject(object, item){
+    object[item.name] = {
+        name: item.name,
+        buy: item.buy,
+        sell: item.sell,
+        season: item.season,
+        category: item.category
+    };
 }
 
 global.getItemByName = (name) => {
@@ -40,11 +44,21 @@ global.giveItemByName = (user, name) => {
     return true;
 }
 
-global.giveItem = (profile, item) => {
+global.giveItem = (profile, item, amount) => {
     if(item === null) return false;
 
-    addItemToProfile(profile, item);
-    removeCurrency(profile, item.buy);
+    for(let i = 0; i < amount; i++){
+        addItemToProfile(profile, item);
+    }
+    removeCurrency(profile, item.buy * amount);
+    return true;
+}
+
+global.removeItem = (profile, item) => {
+    if(item === null) return false;
+
+    removeItemFromProfile(profile, item);
+    addCurrency(profile, item.sell);
     return true;
 }
 

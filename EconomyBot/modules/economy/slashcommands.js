@@ -24,14 +24,6 @@ module.exports.init = async function(){
         data: {
             name: "daily",
             description: "Get your daily rewards.",
-            options: [
-                {
-                    name: "check",
-                    description: "How much time is left.",
-                    required: false,
-                    type: 3,
-                },
-            ],
         },
     })
 

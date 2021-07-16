@@ -24,7 +24,13 @@ module.exports.startCommands = async function () {
             }
 
             if (!args.name) {
-                const profile = db.get(user.id + ".profiles")[0];
+                const profiles = db.get(user.id + ".profiles");
+                let profile = null;
+                if(Array.isArray(profiles)){
+                    profile = profiles[0];
+                } else {
+                    profile = profiles;
+                }
                 let balance = profile.currencyAmount;
 
                 if(balance === null) balance = 0;
@@ -50,7 +56,13 @@ module.exports.startCommands = async function () {
 
             if (!args.profile) {
 
-                const profile = db.get(mentionedUserID + ".profiles")[0];
+                const profiles = db.get(user.id + ".profiles");
+                let profile = null;
+                if(Array.isArray(profiles)){
+                    profile = profiles[0];
+                } else {
+                    profile = profiles;
+                }
                 const balance = profile.currencyAmount;
 
                 await replyCurrency(interaction, `${profile.owner.username} currently has ${balance} ${currencyName}`);
@@ -59,6 +71,11 @@ module.exports.startCommands = async function () {
             }
 
             const profiles = db.get(mentionedUser.id + ".profiles");
+
+            if(!Array.isArray(profiles)){
+                await replyError(interaction, "There is only one profile for this user, Main. Please just use /balance [user]");
+                return;
+            }
 
             let titles = [];
 
@@ -81,31 +98,42 @@ module.exports.startCommands = async function () {
                 initUser(user);
             }
             if (args.type === "create") {
-                if (db.get(user.id + ".profiles").length === 3) {
-                    await replyError(interaction, "You already have 3 profiles.");
+                if (db.get(user.id + ".profiles").length === maximumProfiles) {
+                    await replyError(interaction, "You already have " + maximumProfiles + " profiles.");
                     return;
                 }
                 let profileName = "Profile" + db.get(user.id + ".profiles").length;
+                if(!Array.isArray(db.get(user.id + ".profiles"))){
+                    profileName = "Profile1";
+                }
                 if (!args.name) {
-                    const profile = new EcoProfile(0, [], 1, profileName, user);
+                    const profile = new EcoProfile(startingCurrency, [], 1, profileName, user);
                     addNewProfile(user, profile);
                     await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
                     return;
                 }
                 profileName = args.name;
-                const profile = new EcoProfile(0, [], 1, profileName, user);
-                addNewProfile(profile);
+                const profile = new EcoProfile(startingCurrency, [], 1, profileName, user);
+                addNewProfile(user, profile);
                 await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
             } else if (args.type === "list") {
                 const profiles = db.get(user.id + ".profiles");
 
                 const embed = new Discord.MessageEmbed()
-                    .setTitle("Quingee")
-                    .setColor(defaultColor)
-                    .setDescription("All of your profiles:");
+                    .setTitle("Quingee Profiles")
+                    .setColor(currencyColor)
+                    .setDescription("Your profiles:");
 
+                console.log(profiles);
+
+                if(!Array.isArray(profiles)){
+                    embed.addField(profiles.title, profiles.currencyAmount, false);
+                    await reply(interaction, embed);
+                    return;
+                }
                 for (let i = 0; i < profiles.length; i++) {
-                    embed.addField(profiles[i].title, profiles[i].currencyAmount, false);
+                    const profile = profiles[i];
+                    embed.addField(profile.title, profile.currencyAmount, false);
                 }
 
                 await reply(interaction, embed);
@@ -115,35 +143,80 @@ module.exports.startCommands = async function () {
         } else if (command == "daily"){
             if(!db.get(user.id)) initUser(user);
 
+            if(!db.get(user.id + ".daily")){
+                let midnight = new Date();
+                midnight.setHours(24, 0, 0, 0);
+
+                let time = (midnight.getTime() - new Date().getTime()) / 1000 / 60;
+                time = Math.floor(time);
+                const print = convert(time);
+
+                await replyError(interaction, "You've already redeemed your daily reward! Please wait until tomorrow to redeem again. " + print + " reminding.");
+                return;
+            }
+            db.set(user.id + ".daily", false);
+
             const dailyReward = getRandom(minDailyReward, maxDailyReward, 0);
 
             let addedTo = [];
 
-            for(let i = 0; i < db.get(user.id + ".profiles").length; i++){
-                const currentProfile = db.get(user.id + ".profiles")[i];
-                if(currentProfile.node_slots === 0) continue;
-                for(let j = 0; j < currentProfile.node_slots; i++){
-                    currentProfile.currencyAmount += dailyReward;
-                    addedTo.push(currentProfile);
+            const profiles = db.get(user.id + ".profiles");
+            if(Array.isArray(profiles)){
+                for(let i = 0; i < profiles.length; i++){
+                    const currentProfile = profiles[i];
+                    if(currentProfile.nodeSlots === 0) {
+                        continue;
+                    }
+                    for(let j = 0; j < currentProfile.nodeSlots; j++){
+                        const newProfile = currentProfile;
+                        newProfile.currencyAmount += dailyReward;
+                        updateProfile(newProfile);
+                        addedTo.push(newProfile);
+                    }
                 }
+
+                console.log(db.get(user.id + ".profiles"));
+
+                console.log(addedTo);
+
+                if(addedTo.length === 0){
+                    await replyError(interaction, "You don't have any profiles that contain nodes.");
+                    return;
+                }
+
+                const embed = new Discord.MessageEmbed()
+                    .setTitle("Quingee Daily Rewards")
+                    .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
+                    .setColor(currencyColor);
+
+                for(let i = 0; i < addedTo.length; i++){
+                    embed.addField(addedTo[i].title, "*Node Slots*: **" + addedTo[i].nodeSlots + "**\n*Current Currency*: **" + addedTo[i].currencyAmount + "**", false);
+                }
+
+                await reply(interaction, embed);
+            } else {
+                const profile = db.get(user.id + ".profiles");
+
+                if(profile.nodeSlots === 0){
+                    await replyError(interaction, "You don't have any profiles that contain nodes.");
+                    return;
+                }
+
+                for(let i = 0; i < profile.nodeSlots; i++){
+                    profile.currencyAmount += dailyReward;
+                }
+                updateProfile(profile);
+
+                const embed = new Discord.MessageEmbed()
+                    .setTitle("Quingee Daily Rewards")
+                    .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
+                    .setColor(currencyColor)
+                    .addField(profile.title, "**Node Slots**: " + profile.nodeSlots + ".\n**Current Currency**: " + profile.currencyAmount, false);
+
+                await reply(interaction, embed);
             }
-
-            const embed = new Discord.MessageEmbed()
-                .setTitle("Quingee")
-                .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
-                .setColor(currencyColor);
-
-            for(let i = 0; i < addedTo.length; i++){
-                embed.addField(addedTo[i].title, "Node slots: " + addedTo[i].node_slots + ".\nCurrent Currency: " + addedTo[i].currencyAmount, true);
-            }
-
-            reply(interaction, embed);
         }
     })
-
-    client.on('clickButton', async (button) => {
-        //console.log(button);
-    });
 }
 
 global.replyCurrency = async (interaction, response) => {
@@ -154,3 +227,5 @@ global.replyCurrency = async (interaction, response) => {
 
     await reply(interaction, embed);
 }
+
+const convert = (n) => `0${n / 60 ^ 0}`.slice(-2) + ':' + ('0' + n % 60).slice(-2);

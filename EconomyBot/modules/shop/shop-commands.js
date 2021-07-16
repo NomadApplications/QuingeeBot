@@ -1,5 +1,9 @@
 const pages = [];
 
+const fishingPage = [];
+const miningPage = [];
+const gatheringPage = [];
+
 module.exports.initPages = async function () {
     let currentPage = 0;
 
@@ -19,7 +23,83 @@ module.exports.initPages = async function () {
         }
         if (item.buy !== -1) {
             addedItems++;
-            pages[currentPage][1].push(getAllItems()[items[i]]);
+            pages[currentPage][1].push(item);
+        }
+    }
+
+    initFishing();
+    initMining();
+    initGathering();
+}
+
+function initFishing(){
+    let currentPage = 0;
+
+    fishingPage.push([0, []]);
+
+    const items = fishing;
+
+    let addedItems = 0;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[items[i]];
+        if (addedItems % itemsPerPage === 0) {
+            if (item.buy === 1 && i !== 0) {
+                currentPage++;
+                fishingPage.push([currentPage, []]);
+            }
+        }
+        if (item.buy !== -1) {
+            addedItems++;
+            fishingPage[currentPage][1].push(item);
+        }
+    }
+}
+
+function initMining(){
+    let currentPage = 0;
+
+    miningPage.push([0, []]);
+
+    const items = mining;
+
+    let addedItems = 0;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[items[i]];
+        if (addedItems % itemsPerPage === 0) {
+            if (item.buy === 1 && i !== 0) {
+                currentPage++;
+                miningPage.push([currentPage, []]);
+            }
+        }
+        if (item.buy !== -1) {
+            addedItems++;
+            miningPage[currentPage][1].push(item);
+        }
+    }
+}
+
+function initGathering(){
+    let currentPage = 0;
+
+    gatheringPage.push([0, []]);
+
+    const items = gathering;
+
+    let addedItems = 0;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[items[i]];
+        if (addedItems % itemsPerPage === 0) {
+            if (item.buy === 1 && i !== 0) {
+                currentPage++;
+                gatheringPage.push([currentPage, []]);
+            }
+        }
+        if (item.buy !== -1) {
+            addedItems++;
+            gatheringPage[currentPage][1].push(item);
         }
     }
 }
@@ -45,7 +125,7 @@ module.exports.startCommands = async function () {
         }
 
         if (command === "shop") {
-            await handleShop(interaction, channel, user)
+            await handleShop(interaction, channel, user, args)
         } else if (command === "buy") {
             if(db.get(user.id) === null) initUser(user);
             const item = getItemByName(args.item);
@@ -60,28 +140,82 @@ module.exports.startCommands = async function () {
                 return;
             }
 
-            const profile = db.get(user.id + ".profiles")[0];
-            addNewProfile(user, profile);
-            console.log(db.get(user.id + ".profiles"));
+            const profiles = db.get(user.id + ".profiles");
+            let profile = null;
+            if(Array.isArray(profiles)){
+                profile = profiles[0];
+            } else {
+                profile = profiles;
+            }
 
-            if (profile.currencyAmount >= item.buy) {
+            let amount = 1;
+
+            if(args.quantity){
+                if(isNaN(args.quantity)){
+                    await replyError(interaction, "Please enter a valid number.");
+                    return;
+                }
+                amount = 0;
+                amount += parseInt(args.quantity);
+            }
+
+
+            if (profile.currencyAmount >= item.buy * amount) {
                 // BUY ITEM
-                giveItem(profile, item);
+                giveItem(profile, item, amount);
                 const newBalance = profile.currencyAmount;
-                await replyCurrency(interaction, "You have successfully bought " + item.name + " for " + item.buy + "! You now have a total of " + newBalance + " in " + profile.title + ".");
+                let plural = "";
+                if(amount > 1) plural = "s";
+                await replyCurrency(interaction, "You have successfully bought " + amount + " **" + capitalize(item.name) + plural + "** for " + (item.buy * amount) + "! You now have a total of " + newBalance + " in " + profile.title + ".");
                 return;
             } else {
-                await replyError(interaction, "You do not have enough " + currencyName + " to purchase " + item.name + "!");
+                let plural = "";
+                if(amount > 1) plural = "s";
+                await replyError(interaction, "You do not have enough " + currencyName + " to purchase " + amount + " **" + capitalize(item.name) + plural + "**!");
                 return;
             }
 
 
+        } else if (command === "sell"){
+            if(db.get(user.id) === null) initUser(user);
+            const item = getItemByName(args.item);
+
+            if (item === null || item === undefined) {
+                await replyError(interaction, "Please say a valid item. To view all items and prices, type ``/shop``.");
+                return;
+            }
+
+            if(item.sell <= 0){
+                await replyError(interaction, "You cannot sell this item.");
+                return;
+            }
+
+            const profiles = db.get(user.id + ".profiles");
+            let profile = null;
+            if(Array.isArray(profiles)){
+                profile = profiles[0];
+            } else {
+                profile = profiles;
+            }
+
+
+            const valid = profile.inventory.findIndex(x => x.name === item.name) !== -1;
+
+            if (valid) {
+                removeItem(profile, item);
+                await replyCurrency(interaction, "You have successfully sold **" + capitalize(item.name) + "** for " + item.sell + "! You now have a total of " + profile.currencyAmount + " in " + profile.title + ".");
+                return;
+            } else {
+                await replyError(interaction, "You do not have **" + capitalize(item.name) + "** in your inventory. Type ``/inventory`` to see your inventory");
+                return;
+            }
         }
     });
 }
 
-async function handleShop(interaction, channel, user) {
+async function handleShop(interaction, channel, user, args) {
     const pageNumber = 0;
+
     const embed = getPage(pageNumber);
 
     await reply(interaction, "Shop below:");

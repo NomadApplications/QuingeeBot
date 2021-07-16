@@ -3,12 +3,19 @@ module.exports.init = async function() {
         data: {
             name: "shop",
             description: "See the item shop.",
+        }
+    })
+
+    await getApp(guildID).commands.post({
+        data: {
+            name: "sell",
+            description: "Sell any items in your inventory.",
             options: [
                 {
-                    name: "category",
-                    description: "[]",
-                    required: false,
-                    type: 3,
+                    name: "item",
+                    description: "Which item you would like to sell.",
+                    required: true,
+                    type: 3
                 }
             ]
         }
@@ -28,7 +35,7 @@ module.exports.init = async function() {
                 {
                     name: "quantity",
                     description: "How much you would like to buy.",
-                    required: true,
+                    required: false,
                     type: 3,
                 }
             ]

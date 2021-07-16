@@ -33,6 +33,38 @@ client.on("ready", async () => {
 
 client.on("message", message => {
     const args = message.content.split(" ").map(arg => arg.toLowerCase());
+
+    if(args[0] === "!add"){
+        if(!args[1]) return message.channel.send("Please specify amount.");
+        if(isNaN(args[1])) return message.channel.send("Please specify valid number.");
+
+        const profiles = db.get(message.author.id + ".profiles");
+        let profile = null;
+        if(Array.isArray(profiles)){
+            profile = profiles[0];
+        } else {
+            profile = profiles;
+        }
+        const newProfile = profile;
+        newProfile.currencyAmount += parseInt(args[1]);
+        updateProfile(newProfile);
+        message.channel.send("Successfully added " + args[1] + " to " + message.author.username);
+    } else if (args[0] === "!remove"){
+        if(!args[1]) return message.channel.send("Please specify amount.");
+        if(isNaN(args[1])) return message.channel.send("Please specify valid number.");
+
+        const profiles = db.get(message.author.id + ".profiles");
+        let profile = null;
+        if(Array.isArray(profiles)){
+            profile = profiles[0];
+        } else {
+            profile = profiles;
+        }
+        const newProfile = profile;
+        newProfile.currencyAmount -= parseInt(args[1]);
+        updateProfile(newProfile);
+        message.channel.send("Successfully removed " + args[1] + " from " + message.author.username);
+    }
 })
 
 function initCommands() {

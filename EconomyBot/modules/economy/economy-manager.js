@@ -1,3 +1,5 @@
+global.users = [];
+
 module.exports.init = async function(){
     const list = client.guilds.cache.get(guildID);
     list.members.cache.forEach(member => {
@@ -11,24 +13,29 @@ module.exports.init = async function(){
 
 global.initUser = function(user){
     if(db.get(user.id) !== null) return;
-    db.set(user.id, { profiles: [] });
     const startingProfile = new EcoProfile(startingCurrency, [], 1, "Main", user);
-
-    addNewProfile(user, startingProfile);
+    db.set(user.id, { profiles: [startingProfile], daily: true });
 }
 
 global.addNewProfile = function(user, profile){
     if(db.get(user.id) === null) initUser(user);
-    const list = db.get(user.id + ".profiles");
-    list.push(profile);
-    db.set(user.id + ".profiles", list);
+    if(Array.isArray(db.get(user.id + ".profiles"))){
+        const list = db.get(user.id + ".profiles");
+        list.push(profile);
+        db.set(user.id + ".profiles", list);
+    } else {
+        const list = [];
+        list.push(db.get(user.id + ".profiles"));
+        list.push(profile);
+        db.set(user.id + ".profiles", list);
+    }
 }
 
 global.addCurrency = function(profile, currencyAmount){
     if(db.get(profile.owner.id) === null) initUser(profile.owner);
     const newProfile = profile;
     newProfile.currencyAmount += currencyAmount;
-    updateProfile(profile.owner, newProfile);
+    updateProfile(newProfile);
 }
 
 global.removeCurrency = function(profile, currencyAmount){
@@ -42,6 +49,8 @@ global.addItemToProfile = function(profile, item){
     if(db.get(profile.owner.id) === null) initUser(profile.owner);
     const newProfile = profile;
     newProfile.inventory.push(item);
+
+    console.log(newProfile.inventory);
     updateProfile(newProfile);
 }
 
@@ -49,17 +58,22 @@ global.removeItemFromProfile = function(profile, item){
     if(db.get(profile.owner.id) === null) initUser(profile.owner);
     const newProfile = profile;
     const index = newProfile.inventory.findIndex(x => x.name === item.name);
-    newProfile.inventory.slice(index, 1);
+    console.log(newProfile.inventory[index]);
+    newProfile.inventory.splice(index, 1);
     updateProfile(newProfile);
 }
 
 global.updateProfile = function(profile){
-    addNewProfile(profile.owner, profile);
     const profiles = db.get(profile.owner.id + ".profiles")
-    console.log(profiles);
-    const index = profiles.findIndex(x => x.title === profile.title);
-    const f = db.get(profile.owner.id + ".profiles")[index] = profile;
-    db.set(profile.owner.id + ".profiles", f);
+    if(Array.isArray(profiles)){
+        const index = profiles.findIndex(x => x.title === profile.title);
+        const list = db.get(profile.owner.id + ".profiles");
+        const f = list[index] = profile;
+        db.set(profile.owner.id + ".profiles", list);
+    } else {
+        db.set(profile.owner.id + ".profiles", profile);
+    }
+
 }
 
 global.EcoProfile = class {

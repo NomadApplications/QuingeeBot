@@ -25,6 +25,16 @@ global.newDay = function(){
     if(db.get("seasons") === null){
         initSeasons();
     }
+
+    const list = client.guilds.cache.get(guildID);
+    list.members.cache.forEach(member => {
+        const user = member.user;
+        if(db.get(user.id) === null){
+            initUser(user);
+        }
+        db.set(user.id + ".daily", true);
+    })
+
     db.add("seasons.currentDay", 1);
 
     if(db.get("seasons.currentDay") === seasonLength){
