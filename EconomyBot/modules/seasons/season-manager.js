@@ -1,4 +1,4 @@
-global.seasons = Object.freeze({
+global.seasons = {
     spring1: "🌷 Spring 1",
     spring2: "🌷 Spring 2",
     summer1: "☀ Summer 1",
@@ -7,10 +7,10 @@ global.seasons = Object.freeze({
     fall2: "🍁 Fall 2",
     winter1: "❄ Winter 1",
     winter2: "❄ Winter 2"
-});
+};
 
 module.exports.init = async function(){
-    // Do some shit
+
 }
 
 const s = schedule.scheduleJob({hour: 0, minute: 0}, function () {
@@ -36,6 +36,17 @@ global.newDay = function(){
     })
 
     db.add("seasons.currentDay", 1);
+
+    seasonEvents.forEach(event => {
+        if(seasons[event.eventSeason] === null) return;
+        const season = seasons[event.eventSeason];
+        if(db.get("seasons.currentSeason") === season){
+            if(db.get("seasons.currentDay") === event.eventDay){
+                let announcementChannel = client.guilds.cache.get(guildID).channels.cache.get(announcementChannelID);
+                announcementChannel.send(event.announcementMessage);
+            }
+        }
+    })
 
     if(db.get("seasons.currentDay") === seasonLength){
         let announcementChannel = client.guilds.cache.get(guildID).channels.cache.get(announcementChannelID);

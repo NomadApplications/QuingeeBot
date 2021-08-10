@@ -55,4 +55,19 @@ module.exports.init = async function() {
             ]
         }
     })
+
+    await getApp(guildID).commands.post({
+        data: {
+            name: "upgrade",
+            description: "Buy a house. (One Bedroom House, 3 Room 2 Bath).",
+            options: [
+                {
+                    name: "profile",
+                    description: "Which profile you would like to upgrade.",
+                    required: true,
+                    type: 3
+                }
+            ]
+        }
+    })
 }

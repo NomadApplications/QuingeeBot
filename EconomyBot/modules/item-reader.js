@@ -92,6 +92,7 @@ global.getEmojiByCategory = (item) => {
     else if (category === "gathering") emoji = "🧤"
     else if (category === "crafted items") emoji = "⚒"
     else if (category === "daily") emoji = "☀"
+    else if (category === "furniture") emoji = "🪑"
 
     return emoji;
 }

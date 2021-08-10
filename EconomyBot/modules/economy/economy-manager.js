@@ -81,9 +81,9 @@ global.getItemByCategory = function(profile, category){
 }
 
 global.houseTypes = {
-    oneRoomCabin: {name: "One Room Cabin", nodeAmount: 1},
-    oneBedroomHouse: {name: "One Bedroom House", nodeAmount: 2},
-    threeRoomTwoBath: {name: "3 Room 2 Bath", nodeAmount: 3},
+    oneRoomCabin: {name: "One Room Cabin", nodeAmount: 1, price: 0  },
+    oneBedroomHouse: {name: "One Bedroom House", nodeAmount: 2,  price: 500},
+    threeRoomTwoBath: {name: "3 Room 2 Bath", nodeAmount: 3,  price: 1000},
 }
 
 global.EcoProfile = class {

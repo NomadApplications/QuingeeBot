@@ -17,9 +17,6 @@ global.errorColor = config.colors.errorColor;
 global.currencyColor = config.colors.currencyColor;
 global.musicColor = config.colors.musicColor;
 
-require('discord-buttons')(client);
-global.disbut = require('discord-buttons');
-
 // ITEMS
 
 global.items = itemConfig.items;

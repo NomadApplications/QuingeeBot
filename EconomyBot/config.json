@@ -19,12 +19,14 @@
     "seasonEvents": [
       {
         "eventTitle": "Harvest Festival",
-        "eventSeason": "Spring 1",
+        "eventSeason": "spring1",
+        "eventDay": 1,
         "announcementMessage": "It's the Harvest Festival y'all!"
       },
       {
         "eventTitle": "Winter Reading",
-        "eventSeason": "Winter 2",
+        "eventSeason": "winter2",
+        "eventDay": 1,
         "announcementMessage:": "We made it to Winter 2! Get ready for some reading!"
       }
     ]

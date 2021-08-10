@@ -189,16 +189,16 @@ async function inventoryManager(user, interaction, args) {
         channel.send(embed);
         return;
     }
-    sendEmbed(embed, channel, 0, profile);
+    sendEmbed(embed, channel, 0, profile, user);
 }
 
-function sendEmbed(embed, channel, pageNumber, profile){
+function sendEmbed(embed, channel, pageNumber, profile, user){
     channel.send(embed).then(embedMessage => {
-        editEmbed(embedMessage, embed, pageNumber, profile);
+        editEmbed(embedMessage, embed, pageNumber, profile, user);
     })
 }
 
-function editEmbed(message, embed, pageNumber, profile) {
+function editEmbed(message, embed, pageNumber, profile, user) {
     message.edit(embed).then(embedMessage => {
         embedMessage.react('◀');
         embedMessage.react('▶');
@@ -221,14 +221,14 @@ function editEmbed(message, embed, pageNumber, profile) {
 
                 e = getPage(p, profile);
 
-                editEmbed(embedMessage, e, p, profile);
+                editEmbed(embedMessage, e, p, profile, user);
             } else if (collected.first().emoji.name == "▶") {
                 if (pageNumber === pages.length - 1) p = 0;
                 else p = pageNumber + 1;
 
                 e = getPage(p, profile);
 
-                editEmbed(embedMessage, e, p, profile);
+                editEmbed(embedMessage, e, p, profile, user);
             }
         }).catch(() => {
             return;
@@ -241,15 +241,18 @@ function initPages(profile) {
     let currentPage = 0;
     pages[currentPage] = [];
     let added = [];
+    let itemNames = [];
+    profile.inventory.forEach(i => itemNames.push(i.name));
     for (let i = 0; i < profile.inventory.length; i++) {
-        if (i === 20) {
+        if (added.length > 20) {
             currentPage++;
             pages[currentPage] = [];
         }
         if(added.includes(profile.inventory[i].name)){
             continue;
         }
-        pages[currentPage].push(profile.inventory[i]);
+        const count = findCounts(itemNames)[profile.inventory[i].name];
+        pages[currentPage].push([profile.inventory[i], count]);
         added.push(profile.inventory[i].name);
     }
     return pages;
@@ -259,20 +262,20 @@ function getPage(pageNumber, profile) {
     const maximumPages = pages.length;
 
     const embed = new Discord.MessageEmbed()
-        .setTitle("Inventory")
+        .setTitle("💼 Inventory")
         .setColor(currencyColor)
-        .setDescription("Inventory of " + profile.title + ". **Items**:");
+        .setDescription("Inventory of *" + profile.title + "*. **Items**:");
 
     if (pageNumber > pages.length) return null;
 
     for (let i = 0; i < pages[pageNumber].length; i++) {
-        const item = pages[pageNumber][i];
+        const item = pages[pageNumber][i][0];
         let sell = item.sell.toString();
         if(sell === "-1") sell = "N/A";
 
-        embed.addField(capitalize(item.name), `Sell: ${sell}\nCategory: ${item.category}`, true);
+        embed.addField("x" + pages[pageNumber][i][1] + " " + capitalize(item.name), `**Sell**: *${sell}*\n**Category**: *${capitalize(item.category)} ${getEmojiByCategory(item)}*`, true);
     }
-    embed.setFooter("Page " + pageNumber + " / " + maximumPages);
+    embed.setFooter("Page " + (pageNumber+1) + " / " + maximumPages);
 
     return embed;
 }
@@ -285,5 +288,6 @@ global.replyCurrency = async (interaction, response) => {
 
     await reply(interaction, embed);
 }
+
 
 const convert = (n) => `0${n / 60 ^ 0}`.slice(-2) + ':' + ('0' + n % 60).slice(-2);

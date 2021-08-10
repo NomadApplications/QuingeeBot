@@ -1,4 +1,4 @@
-module.exports.startCommands = async function() {
+module.exports.startCommands = async function () {
     client.ws.on("INTERACTION_CREATE", async (interaction) => {
 
         if (interaction.type === 3) return;
@@ -21,9 +21,9 @@ module.exports.startCommands = async function() {
             }
         }
 
-        if(command === "home"){
+        if (command === "home") {
             const profile = getProfileByString(args.profile, user);
-            if(profile === null){
+            if (profile === null) {
                 await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
                 return;
             }
@@ -35,9 +35,9 @@ module.exports.startCommands = async function() {
 
             const nodes = [];
 
-            for(let i = 0; i < profile.nodeSlots.length; i++){
+            for (let i = 0; i < profile.nodeSlots.length; i++) {
                 const slot = profile.nodeSlots[i];
-                if(slot === null){
+                if (slot === null) {
                     nodes.push("OPEN");
                     continue;
                 }
@@ -45,7 +45,7 @@ module.exports.startCommands = async function() {
             }
 
             let nodeString = "";
-            for(let i = 0; i < nodes.length; i++){
+            for (let i = 0; i < nodes.length; i++) {
                 nodeString += "**" + (i + 1) + "**: " + nodes[i] + "\n";
             }
 
@@ -53,14 +53,14 @@ module.exports.startCommands = async function() {
 
             let furnitureString = "";
             const f = profile.inventory.filter(i => i.category === "furniture");
-            if(f.length <= 0) embed.addField("Furniture:", "You do not have any furniture.", false);
+            if (f.length <= 0) embed.addField("Furniture:", "You do not have any furniture.", false);
             else {
                 let itemNames = [];
                 f.forEach(i => itemNames.push(i.name));
 
                 let looped = [];
-                for(let i = 0; i < f.length; i++){
-                    if(looped.includes(f[i].name)) continue;
+                for (let i = 0; i < f.length; i++) {
+                    if (looped.includes(f[i].name)) continue;
                     looped.push(f[i].name);
 
                     const count = findCounts(itemNames)[f[i].name];
@@ -69,89 +69,158 @@ module.exports.startCommands = async function() {
                 embed.addField("Furniture:", furnitureString, false);
             }
             await reply(interaction, embed);
-        } else if (command === "setnode"){
+        } else if (command === "setnode") {
             const profile = getProfileByString(args.profile, user);
-            if(profile === null) {
+            if (profile === null) {
                 await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
                 return;
             }
 
             const items = profile.inventory.filter(i => i.name === args.name);
-            if(items.length <= 0){
+            if (items.length <= 0) {
                 await replyError(interaction, "Please enter an item that you have in your inventory. If you would like to see your current inventory, type ``/inventory [profile]``.");
                 return;
             }
 
             let item = null;
-            if(Array.isArray(items)) item = items[0];
+            if (Array.isArray(items)) item = items[0];
             else item = items;
 
             let slot = 1;
 
-            if(profile.nodeSlots.length === 1) {
+            if (profile.nodeSlots.length === 1) {
                 await replyError(interaction, "You can only set a node if you have more than one node.");
                 return;
             }
 
-            for(let i = 0;  i < profile.nodeSlots.length; i++){
-                if(profile.nodeSlots[i] === null){
+            for (let i = 0; i < profile.nodeSlots.length; i++) {
+                if (profile.nodeSlots[i] === null) {
                     slot = i;
                     break;
                 }
             }
 
             const added = profile.setNode(item, slot);
-            if(!added) {
+            if (!added) {
                 await replyError(interaction, "There was an error adding this node.");
                 return;
             }
             await replySuccess(interaction, `You have successfully added ${capitalize(item.name)} to your node slots in ${profile.title}. Type ``/home ${profile.title}`` to see your current nodes.`);
-        } else if (command === "removenode"){
+        } else if (command === "removenode") {
             const profile = getProfileByString(args.profile, user);
-            if(profile === null) {
+            if (profile === null) {
                 await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
                 return;
             }
 
             const items = profile.nodeSlots.filter(i => i.name === args.name);
-            if(items.length <= 0){
+            if (items.length <= 0) {
                 await replyError(interaction, "Please enter an item that is currently in a slot. If you would like to see your current node slots, type ``/home [profile]``.");
                 return;
             }
 
             let item = null;
-            if(Array.isArray(items)) item = items[0];
+            if (Array.isArray(items)) item = items[0];
             else item = items;
 
             const removed = profile.removeNode(item);
-            if(!removed){
+            if (!removed) {
                 await replyError(interaction, "There was an error removing this node.");
                 return;
             }
 
             await replySuccess(interaction, `You have successfully removed ${capitalize(item.name)} from your node slots in ${profile.title}. Type ``/home ${profile.title}`` to see your current nodes.`);
+        } else if (command === "upgrade") {
+            const profile = getProfileByString(args.profile, user);
+            if (profile === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+            let houseType = profile.houseType;
+            let previous =  profile.houseType;
+            if (profile.houseType.name === houseTypes.oneRoomCabin.name) {
+                houseType = houseTypes.oneBedroomHouse;
+            } else if (profile.houseType.name === houseTypes.oneBedroomHouse.name) {
+                houseType = houseTypes.threeRoomTwoBath;
+            } else {
+                await replyError(interaction, "You already have the best house!");
+                return;
+            }
+
+            if(profile.currencyAmount < houseType.price){
+                await replyError(interaction, "You do not have enough Gald to upgrade your house! You need " + houseType.price + " and you currently have " + profile.currencyAmount);
+                return;
+            }
+
+            const embed = new Discord.MessageEmbed()
+                .setTitle("🏠 House Upgrade!")
+                .setDescription(`*${profile.houseType.name}* -> **${houseType.name}** (**$${houseType.price}**). If you would like to confirm, react with ✅.`)
+                .setColor(defaultColor);
+
+            await reply(interaction, "Upgrade Below:");
+
+            channel.send(embed).then(async embedMessage => {
+                await embedMessage.react("✅");
+
+                embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '✅'), {
+                    max: 1,
+                    time: 30000
+                }).then(collected => {
+
+                    embedMessage.reactions.removeAll();
+
+                    if (collected.first().emoji.name == '✅') {
+                        removeCurrency(profile, houseType.price);
+                        const p = profile;
+                        p.houseType = houseType;
+
+                        let previousNodes = profile.nodeSlots;
+                        let newNodes = [];
+                        for(let i = 0; i < previousNodes.length; i++){
+                            if(previousNodes[i] === null) continue;
+                            newNodes.push(previousNodes[i]);
+                        }
+                        console.log(newNodes);
+                        for(let i = 0; i < houseType.nodeAmount; i++){
+                            if(!newNodes[i]) newNodes.push(null);
+                        }
+                        p.nodeSlots = newNodes;
+                        updateProfile(p);
+
+                        const s = new Discord.MessageEmbed()
+                            .setTitle("SUCCESS")
+                            .setColor(successColor)
+                            .setDescription("You have upgraded from *" + previous.name + "* to **" + houseType.name + "**!");
+
+                        channel.send(s);
+                        return;
+                    }
+                }).catch(() => {
+                    return;
+                })
+            })
         }
     });
 }
 
-global.getProfileByString = function(title, user){
+global.getProfileByString = function (title, user) {
     const profiles = db.get(user.id + ".profiles");
     let profile = null;
 
-    if(Array.isArray(profiles)){
+    if (Array.isArray(profiles)) {
         let titles = [];
         profiles.forEach(p => {
             titles.push(p.title.toLowerCase());
         })
         const profileIndex = titles.indexOf(title.toLowerCase());
-        if(profileIndex < 0){
+        if (profileIndex < 0) {
             return null;
         }
         profile = profiles[profileIndex];
     } else {
         profile = profiles;
 
-        if(profile.title.toLowerCase() !== title.toLowerCase()){
+        if (profile.title.toLowerCase() !== title.toLowerCase()) {
             return null;
         }
     }

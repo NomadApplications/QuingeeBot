@@ -12,7 +12,6 @@ module.exports.init = async function(){
         if(interaction.type === 3) return;
 
         const command = interaction.data.name.toLowerCase();
-        const args = interaction.data.options;
 
         if(command === "help"){
             const commands = await getApp(guildID).commands.get();
@@ -24,7 +23,7 @@ module.exports.init = async function(){
             for(let i = 0; i < commands.length; i++){
                 embed.addField(`/${commands[i].name}`, `${commands[i].description}`);
             }
-            reply(interaction, embed);
+            await reply(interaction, embed);
         }
     });
 }

@@ -1,5 +1,4 @@
 require("./globals");
-const fs = require("fs");
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user.username}`);
