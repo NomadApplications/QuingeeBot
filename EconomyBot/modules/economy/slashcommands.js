@@ -47,4 +47,19 @@ module.exports.init = async function(){
             ]
         }
     })
+
+    await getApp(guildID).commands.post({
+        data: {
+            name: "inventory",
+            description: "See your current inventory.",
+            options: [
+                {
+                    name: "profile",
+                    description: "Which profile's inventory you would like to see. [not case-sensitive]",
+                    required: false,
+                    type: 3,
+                }
+            ]
+        }
+    })
 }

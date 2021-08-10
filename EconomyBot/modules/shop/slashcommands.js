@@ -23,6 +23,13 @@ module.exports.init = async function() {
 
     await getApp(guildID).commands.post({
         data: {
+            name: "inventory",
+            description: "See all of your items.",
+        }
+    })
+
+    await getApp(guildID).commands.post({
+        data: {
             name: "buy",
             description: "See your (or someone else's) current balance.",
             options: [

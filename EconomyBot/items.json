@@ -370,6 +370,20 @@
       "sell": 5,
       "season": -1,
       "category": "gathering"
+    },
+    {
+      "name": "wooden table",
+      "buy": 0,
+      "sell": -1,
+      "season": -1,
+      "category": "furniture"
+    },
+    {
+      "name": "wooden chair",
+      "buy": 0,
+      "sell": -1,
+      "season": -1,
+      "category": "furniture"
     }
   ]
 }

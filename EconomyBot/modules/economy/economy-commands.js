@@ -26,16 +26,16 @@ module.exports.startCommands = async function () {
             if (!args.name) {
                 const profiles = db.get(user.id + ".profiles");
                 let profile = null;
-                if(Array.isArray(profiles)){
+                if (Array.isArray(profiles)) {
                     profile = profiles[0];
                 } else {
                     profile = profiles;
                 }
                 let balance = profile.currencyAmount;
 
-                if(balance === null) balance = 0;
+                if (balance === null) balance = 0;
 
-                await replyCurrency(interaction, `${channel.guild.users.cache.get(profile.owner).username} currently has ${balance} ${currencyName}`);
+                await replyCurrency(interaction, `${channel.guild.users.cache.get(getUserById(profile.id, profile.guildId)).username} currently has ${balance} ${currencyName}`);
 
                 return;
             }
@@ -58,32 +58,32 @@ module.exports.startCommands = async function () {
 
                 const profiles = db.get(user.id + ".profiles");
                 let profile = null;
-                if(Array.isArray(profiles)){
+                if (Array.isArray(profiles)) {
                     profile = profiles[0];
                 } else {
                     profile = profiles;
                 }
                 const balance = profile.currencyAmount;
 
-                await replyCurrency(interaction, `${profile.owner.username} currently has ${balance} ${currencyName}`);
+                await replyCurrency(interaction, `${getUserById(profile.id, profile.guildId).username} currently has ${balance} ${currencyName}`);
 
                 return;
             }
 
             const profiles = db.get(mentionedUser.id + ".profiles");
 
-            if(!Array.isArray(profiles)){
+            if (!Array.isArray(profiles)) {
                 await replyError(interaction, "There is only one profile for this user, Main. Please just use /balance [user]");
                 return;
             }
 
             let titles = [];
 
-            for(let i = 0; i < profiles.length; i++){
+            for (let i = 0; i < profiles.length; i++) {
                 titles.push(profiles[i].title.toLowerCase());
             }
 
-            if(!titles.includes(args.profile)){
+            if (!titles.includes(args.profile)) {
                 await replyError(interaction, "You need to specify a valid profile name.");
                 return;
             }
@@ -92,7 +92,7 @@ module.exports.startCommands = async function () {
 
             const balance = profile.currencyAmount;
 
-            await replyCurrency(interaction, `${profile.owner.username} currently has ${balance} ${currencyName} in ${profile.title}`);
+            await replyCurrency(interaction, `${getUserById(profile.id, profile.guildId).username} currently has ${balance} ${currencyName} in ${profile.title}`);
         } else if (command === "profile") {
             if (!db.get(user.id + ".profiles")) {
                 initUser(user);
@@ -103,7 +103,7 @@ module.exports.startCommands = async function () {
                     return;
                 }
                 let profileName = "Profile" + db.get(user.id + ".profiles").length;
-                if(!Array.isArray(db.get(user.id + ".profiles"))){
+                if (!Array.isArray(db.get(user.id + ".profiles"))) {
                     profileName = "Profile1";
                 }
                 if (!args.name) {
@@ -124,9 +124,7 @@ module.exports.startCommands = async function () {
                     .setColor(currencyColor)
                     .setDescription("Your profiles:");
 
-                console.log(profiles);
-
-                if(!Array.isArray(profiles)){
+                if (!Array.isArray(profiles)) {
                     embed.addField(profiles.title, profiles.currencyAmount, false);
                     await reply(interaction, embed);
                     return;
@@ -140,10 +138,12 @@ module.exports.startCommands = async function () {
             } else {
                 await replyError(interaction, "You must mention a valid option [create, list].");
             }
-        } else if (command == "daily"){
-            if(!db.get(user.id)) initUser(user);
+        } else if (command == "daily") {
+            if (!db.get(user.id)) initUser(user);
 
-            if(!db.get(user.id + ".daily")){
+            const dailyReward = getRandom(minDailyReward, maxDailyReward, 0);
+
+            if (!db.get(user.id + ".daily")) {
                 let midnight = new Date();
                 midnight.setHours(24, 0, 0, 0);
 
@@ -155,68 +155,126 @@ module.exports.startCommands = async function () {
                 return;
             }
             db.set(user.id + ".daily", false);
-
-            const dailyReward = getRandom(minDailyReward, maxDailyReward, 0);
-
-            let addedTo = [];
-
-            const profiles = db.get(user.id + ".profiles");
-            if(Array.isArray(profiles)){
-                for(let i = 0; i < profiles.length; i++){
-                    const currentProfile = profiles[i];
-                    if(currentProfile.nodeSlots === 0) {
-                        continue;
-                    }
-                    for(let j = 0; j < currentProfile.nodeSlots; j++){
-                        const newProfile = currentProfile;
-                        newProfile.currencyAmount += dailyReward;
-                        updateProfile(newProfile);
-                        addedTo.push(newProfile);
-                    }
-                }
-
-                console.log(db.get(user.id + ".profiles"));
-
-                console.log(addedTo);
-
-                if(addedTo.length === 0){
-                    await replyError(interaction, "You don't have any profiles that contain nodes.");
-                    return;
-                }
-
-                const embed = new Discord.MessageEmbed()
-                    .setTitle("Quingee Daily Rewards")
-                    .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
-                    .setColor(currencyColor);
-
-                for(let i = 0; i < addedTo.length; i++){
-                    embed.addField(addedTo[i].title, "*Node Slots*: **" + addedTo[i].nodeSlots + "**\n*Current Currency*: **" + addedTo[i].currencyAmount + "**", false);
-                }
-
-                await reply(interaction, embed);
-            } else {
-                const profile = db.get(user.id + ".profiles");
-
-                if(profile.nodeSlots === 0){
-                    await replyError(interaction, "You don't have any profiles that contain nodes.");
-                    return;
-                }
-
-                for(let i = 0; i < profile.nodeSlots; i++){
-                    profile.currencyAmount += dailyReward;
-                }
-                updateProfile(profile);
-
-                const embed = new Discord.MessageEmbed()
-                    .setTitle("Quingee Daily Rewards")
-                    .setDescription("Daily Reward. **Amount: " + dailyReward + "**.")
-                    .setColor(currencyColor)
-                    .addField(profile.title, "**Node Slots**: " + profile.nodeSlots + ".\n**Current Currency**: " + profile.currencyAmount, false);
-
-                await reply(interaction, embed);
-            }
+        } else if (command === "inventory") {
+            await inventoryManager(user, interaction, args);
         }
+    });
+}
+
+async function inventoryManager(user, interaction, args) {
+    const channel = client.guilds.cache.get(interaction.guild_id).channels.cache.get(interaction.channel_id);
+    let profile = null;
+
+    if (!args.profile) {
+        profile = getProfileByString("Main", user);
+        if (profile === null) {
+            await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+            return;
+        }
+    }
+
+    if(profile === null){
+        profile = getProfileByString(args.profile, user);
+        if (profile === null) {
+            await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+            return;
+        }
+    }
+
+    await reply(interaction, "Inventory below:");
+
+    const embed = getPage(0, profile);
+
+    if(initPages(profile).length === 1) {
+        channel.send(embed);
+        return;
+    }
+    sendEmbed(embed, channel, 0, profile);
+}
+
+function sendEmbed(embed, channel, pageNumber, profile){
+    channel.send(embed).then(embedMessage => {
+        editEmbed(embedMessage, embed, pageNumber, profile);
     })
+}
+
+function editEmbed(message, embed, pageNumber, profile) {
+    message.edit(embed).then(embedMessage => {
+        embedMessage.react('◀');
+        embedMessage.react('▶');
+
+        let e = null;
+        let p = 0;
+
+        const pages = initPages(profile);
+
+        embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '◀' || reaction.emoji.name == '▶'), {
+            max: 1,
+            time: 30000
+        }).then(collected => {
+
+            embedMessage.reactions.removeAll();
+
+            if (collected.first().emoji.name == '◀') {
+                if (pageNumber === 0) p = pages.length - 1;
+                else p = pageNumber - 1;
+
+                e = getPage(p, profile);
+
+                editEmbed(embedMessage, e, p, profile);
+            } else if (collected.first().emoji.name == "▶") {
+                if (pageNumber === pages.length - 1) p = 0;
+                else p = pageNumber + 1;
+
+                e = getPage(p, profile);
+
+                editEmbed(embedMessage, e, p, profile);
+            }
+        }).catch(() => {
+            return;
+        });
+    });
+}
+
+function initPages(profile) {
+    let pages = [];
+    let currentPage = 0;
+    pages[currentPage] = [];
+    let added = [];
+    for (let i = 0; i < profile.inventory.length; i++) {
+        if (i === 20) {
+            currentPage++;
+            pages[currentPage] = [];
+        }
+        if(added.includes(profile.inventory[i].name)){
+            continue;
+        }
+        pages[currentPage].push(profile.inventory[i]);
+        added.push(profile.inventory[i].name);
+    }
+    return pages;
+}
+function getPage(pageNumber, profile) {
+    const pages = initPages(profile);
+    const maximumPages = pages.length;
+
+    const embed = new Discord.MessageEmbed()
+        .setTitle("Inventory")
+        .setColor(currencyColor)
+        .setDescription("Inventory of " + profile.title + ". **Items**:");
+
+    if (pageNumber > pages.length) return null;
+
+    for (let i = 0; i < pages[pageNumber].length; i++) {
+        const item = pages[pageNumber][i];
+        let sell = item.sell.toString();
+        if(sell === "-1") sell = "N/A";
+
+        embed.addField(capitalize(item.name), `Sell: ${sell}\nCategory: ${item.category}`, true);
+    }
+    embed.setFooter("Page " + pageNumber + " / " + maximumPages);
+
+    return embed;
 }
 
 global.replyCurrency = async (interaction, response) => {

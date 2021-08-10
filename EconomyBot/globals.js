@@ -31,6 +31,13 @@ global.shop_slash_commands = require("./modules/shop/slashcommands");
 global.shop_commands = require("./modules/shop/shop-commands");
 global.itemsPerPage = config.economy.shopItemsPerPage;
 
+// HOMES
+
+global.homestead_commands = require("./modules/homesteads/homestead-commands");
+global.homestead_slash_commands = require("./modules/homesteads/slashcommands");
+
+global.quingeeItem = new Item("Quingee", -1, -1, -1, "Node");
+
 // CALENDAR
 
 global.seasonEvents = config.calendar.seasonEvents;
@@ -102,3 +109,9 @@ global.capitalize = function(string){
 
     return final;
 }
+
+global.getUserById = function(userId, guildId){
+    return client.guilds.cache.get(guildId).members.cache.get(userId).user;
+}
+
+global.findCounts = arr => arr.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {});

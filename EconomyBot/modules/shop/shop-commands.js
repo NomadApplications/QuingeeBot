@@ -26,82 +26,6 @@ module.exports.initPages = async function () {
             pages[currentPage][1].push(item);
         }
     }
-
-    initFishing();
-    initMining();
-    initGathering();
-}
-
-function initFishing(){
-    let currentPage = 0;
-
-    fishingPage.push([0, []]);
-
-    const items = fishing;
-
-    let addedItems = 0;
-
-    for (let i = 0; i < items.length; i++) {
-        const item = items[items[i]];
-        if (addedItems % itemsPerPage === 0) {
-            if (item.buy === 1 && i !== 0) {
-                currentPage++;
-                fishingPage.push([currentPage, []]);
-            }
-        }
-        if (item.buy !== -1) {
-            addedItems++;
-            fishingPage[currentPage][1].push(item);
-        }
-    }
-}
-
-function initMining(){
-    let currentPage = 0;
-
-    miningPage.push([0, []]);
-
-    const items = mining;
-
-    let addedItems = 0;
-
-    for (let i = 0; i < items.length; i++) {
-        const item = items[items[i]];
-        if (addedItems % itemsPerPage === 0) {
-            if (item.buy === 1 && i !== 0) {
-                currentPage++;
-                miningPage.push([currentPage, []]);
-            }
-        }
-        if (item.buy !== -1) {
-            addedItems++;
-            miningPage[currentPage][1].push(item);
-        }
-    }
-}
-
-function initGathering(){
-    let currentPage = 0;
-
-    gatheringPage.push([0, []]);
-
-    const items = gathering;
-
-    let addedItems = 0;
-
-    for (let i = 0; i < items.length; i++) {
-        const item = items[items[i]];
-        if (addedItems % itemsPerPage === 0) {
-            if (item.buy === 1 && i !== 0) {
-                currentPage++;
-                gatheringPage.push([currentPage, []]);
-            }
-        }
-        if (item.buy !== -1) {
-            addedItems++;
-            gatheringPage[currentPage][1].push(item);
-        }
-    }
 }
 
 module.exports.startCommands = async function () {
@@ -238,15 +162,7 @@ function getPage(pageNumber) {
     for (let i = 0; i < pages[pageNumber][1].length; i++) {
         const item = pages[pageNumber][1][i];
 
-        const category = item.category;
-        let emoji = "";
-
-        if (category === "fishing") emoji = "🎣"
-        else if (category === "mining") emoji = "💎"
-        else if (category === "gathering") emoji = "🧤"
-        else if (category === "crafted items") emoji = "⚒"
-        else if (category === "daily") emoji = "☀"
-
+        const emoji = getEmojiByCategory(item);
         embed.addField(capitalize(item.name) + `\n *${emoji + capitalize(item.category)}*`, `*Price*: ${item.buy}`, true);
     }
 
@@ -266,7 +182,6 @@ function editEmbed(message, embed, pageNumber, user) {
 
         let embed = null;
         let p = 0;
-
 
         embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '◀' || reaction.emoji.name == '▶'), {
             max: 1,

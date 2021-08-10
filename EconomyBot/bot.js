@@ -1,4 +1,5 @@
 require("./globals");
+const fs = require("fs");
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user.username}`);
@@ -24,6 +25,9 @@ client.on("ready", async () => {
     season_manager.init();
     season_commands.startCommands();
     season_slash_commands.init();
+
+    homestead_commands.startCommands();
+    homestead_slash_commands.init();
 
     music_slash_commands.init();
     music_commands.startCommands();

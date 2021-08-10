@@ -5,29 +5,42 @@ global.mining = {};
 global.gathering = {};
 global.crafted_items = {};
 global.daily = {};
+global.furniture = {};
 
 module.exports.initItems = async function(itemList){
     for(let i = 0; i < itemList.length; i++){
         const category = itemList[i].category;
+
+        fishing["name"] = "fishing";
+        mining["name"] = "mining";
+        gathering["name"] = "gathering";
+        crafted_items["name"] = "crafted_items";
+        daily["name"] = "daily";
+        furniture["name"] = "furniture";
 
         if(category === "fishing") addItemToObject(fishing, itemList[i]);
         else if (category === "mining") addItemToObject(mining, itemList[i]);
         else if (category === "gathering") addItemToObject(gathering, itemList[i]);
         else if (category === "crafted items") addItemToObject(crafted_items, itemList[i]);
         else if (category === "daily") addItemToObject(daily, itemList[i]);
+        else if (category === "furniture") addItemToObject(furniture, itemList[i]);
 
         addItemToObject(items, itemList[i]);
     }
 }
 
 function addItemToObject(object, item){
-    object[item.name] = {
-        name: item.name,
-        buy: item.buy,
-        sell: item.sell,
-        season: item.season,
-        category: item.category
-    };
+    object[item.name] = new Item(item.name, item.buy, item.sell, item.season, item.category);
+}
+
+global.Item = class {
+    constructor(name, buy, sell, season, category) {
+        this.name = name;
+        this.buy = buy;
+        this.sell = sell;
+        this.season = season;
+        this.category = category;
+    }
 }
 
 global.getItemByName = (name) => {
@@ -57,7 +70,9 @@ global.giveItem = (profile, item, amount) => {
 global.removeItem = (profile, item) => {
     if(item === null) return false;
 
-    removeItemFromProfile(profile, item);
+    const removed = removeItemFromProfile(profile, item);
+    if(!removed) return false;
+
     addCurrency(profile, item.sell);
     return true;
 }
@@ -67,3 +82,16 @@ global.getAllItems = () => {
 }
 
 global.getItemByIndex = (i) => items[Object.keys(items)[i]];
+
+global.getEmojiByCategory = (item) => {
+    const category = item.category;
+    let emoji = "";
+
+    if (category === "fishing") emoji = "🎣"
+    else if (category === "mining") emoji = "💎"
+    else if (category === "gathering") emoji = "🧤"
+    else if (category === "crafted items") emoji = "⚒"
+    else if (category === "daily") emoji = "☀"
+
+    return emoji;
+}
