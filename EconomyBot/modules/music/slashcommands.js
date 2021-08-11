@@ -1,5 +1,5 @@
-module.exports.init = async function() {
-    await getApp(guildID).commands.post({
+module.exports.init = function() {
+     getApp(guildID).commands.post({
         data: {
             name: "music",
             description: "Quingee's music bot function.",

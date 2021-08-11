@@ -151,10 +151,39 @@ module.exports.startCommands = async function () {
                 time = Math.floor(time);
                 const print = convert(time);
 
-                await replyError(interaction, "You've already redeemed your daily reward! Please wait until tomorrow to redeem again. " + print + " reminding.");
+                await replyError(interaction, "You've already redeemed your daily reward! Please wait until tomorrow to redeem again. " + print + " remaining.");
                 return;
             }
             db.set(user.id + ".daily", false);
+
+            let addedTo = [];
+            const profiles = db.get(user.id + ".profiles");
+            if(Array.isArray(profiles)){
+                for(let i = 0; i < profiles.length; i++){
+                    let m = 0;
+                    profiles[i].nodeSlots.forEach(node => { if(node !== null) m++; })
+                    addCurrency(profiles[i], dailyReward * m);
+                    addedTo.push([profiles[i], m]);
+                }
+            } else {
+                let m = 0;
+                profiles.nodeSlots.forEach(node => { if(node !== null) m++; })
+                profiles.addCurrency(profiles, dailyReward * m);
+                addedTo.push([profiles, m]);
+            }
+
+            const embed = new Discord.MessageEmbed()
+                .setTitle("Daily Reward")
+                .setColor(currencyColor)
+                .setDescription("Reward: " + dailyReward);
+
+            addedTo.forEach(a => {
+                const p = a[0];
+                const m = a[1];
+                embed.addField(p.title, `x${m} ($${dailyReward * m})`, false);
+            })
+
+            await reply(interaction, embed);
         } else if (command === "inventory") {
             await inventoryManager(user, interaction, args);
         }

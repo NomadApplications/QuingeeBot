@@ -32,6 +32,9 @@ client.on("ready", async () => {
     music_commands.startCommands();
 
     itemReader.initItems(items);
+
+    minigame_commands.startCommands();
+    minigame_slash_commands.init();
 })
 
 client.on("message", message => {

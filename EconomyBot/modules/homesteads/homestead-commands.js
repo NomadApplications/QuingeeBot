@@ -1,4 +1,4 @@
-module.exports.startCommands = async function () {
+module.exports.startCommands = function () {
     client.ws.on("INTERACTION_CREATE", async (interaction) => {
 
         if (interaction.type === 3) return;
@@ -46,7 +46,7 @@ module.exports.startCommands = async function () {
 
             let nodeString = "";
             for (let i = 0; i < nodes.length; i++) {
-                nodeString += "**" + (i + 1) + "**: " + nodes[i] + "\n";
+                nodeString += "**" + (i + 1) + "**: " + capitalize(nodes[i]) + "\n";
             }
 
             embed.addField("Node Slots:", nodeString, false);
@@ -76,7 +76,7 @@ module.exports.startCommands = async function () {
                 return;
             }
 
-            const items = profile.inventory.filter(i => i.name === args.name);
+            const items = profile.inventory.filter(i => i.name === args.item);
             if (items.length <= 0) {
                 await replyError(interaction, "Please enter an item that you have in your inventory. If you would like to see your current inventory, type ``/inventory [profile]``.");
                 return;
@@ -100,12 +100,12 @@ module.exports.startCommands = async function () {
                 }
             }
 
-            const added = profile.setNode(item, slot);
+            const added = setNode(profile, item, slot);
             if (!added) {
                 await replyError(interaction, "There was an error adding this node.");
                 return;
             }
-            await replySuccess(interaction, `You have successfully added ${capitalize(item.name)} to your node slots in ${profile.title}. Type ``/home ${profile.title}`` to see your current nodes.`);
+            await replySuccess(interaction, `You have successfully added ${capitalize(item.name)} to your node slots in ${profile.title}. Type ``/home [profile]`` to see your current nodes.`);
         } else if (command === "removenode") {
             const profile = getProfileByString(args.profile, user);
             if (profile === null) {
@@ -119,11 +119,9 @@ module.exports.startCommands = async function () {
                 return;
             }
 
-            let item = null;
-            if (Array.isArray(items)) item = items[0];
-            else item = items;
+            let item = Array.isArray(items) ? items[0] : items;
 
-            const removed = profile.removeNode(item);
+            const removed = removeNode(profile, item);
             if (!removed) {
                 await replyError(interaction, "There was an error removing this node.");
                 return;
@@ -166,7 +164,6 @@ module.exports.startCommands = async function () {
                     max: 1,
                     time: 30000
                 }).then(collected => {
-
                     embedMessage.reactions.removeAll();
 
                     if (collected.first().emoji.name == '✅') {

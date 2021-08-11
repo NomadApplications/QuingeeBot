@@ -6,8 +6,6 @@ module.exports.init = async function(){
         }
     })
 
-
-
     client.ws.on("INTERACTION_CREATE", async interaction => {
         if(interaction.type === 3) return;
 

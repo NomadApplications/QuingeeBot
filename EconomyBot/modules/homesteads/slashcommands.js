@@ -1,5 +1,5 @@
-module.exports.init = async function() {
-    await getApp(guildID).commands.post({
+module.exports.init = function() {
+     getApp(guildID).commands.post({
         data: {
             name: "home",
             description: "All home commands.",
@@ -14,7 +14,7 @@ module.exports.init = async function() {
         }
     })
 
-    await getApp(guildID).commands.post({
+     getApp(guildID).commands.post({
         data: {
             name: "setnode",
             description: "Set a node to one of your profiles.",
@@ -35,7 +35,7 @@ module.exports.init = async function() {
         }
     })
 
-    await getApp(guildID).commands.post({
+     getApp(guildID).commands.post({
         data: {
             name: "removenode",
             description: "Remove a node from one of your profiles.",
@@ -56,7 +56,7 @@ module.exports.init = async function() {
         }
     })
 
-    await getApp(guildID).commands.post({
+     getApp(guildID).commands.post({
         data: {
             name: "upgrade",
             description: "Buy a house. (One Bedroom House, 3 Room 2 Bath).",

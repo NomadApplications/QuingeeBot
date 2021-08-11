@@ -102,27 +102,26 @@ global.EcoProfile = class {
         }
         this.nodeSlots[0] = quingeeItem;
     }
+}
 
-    setNode(item = {}, slot = 0){
-        if(slot > this.nodeSlots.length) return false;
-        if(this.inventory.filter(i => i.name === item.name).length > 0){
-            this.nodeSlots[slot] = item;
-            removeItem(this, item);
-            return true;
-        }
-        return false;
+global.setNode = (profile, item, slot) => {
+    if(slot > profile.nodeSlots.length) return false;
+    if(profile.inventory.filter(i => i.name === item.name).length > 0){
+        profile.nodeSlots[slot] = item;
+        removeItem(profile, item);
+        return true;
     }
+    return false;
+}
 
-    removeNode(item = {}, slot = 0){
-        if(this.nodeSlots[slot] === null) return false;
-        if(this.nodeSlots.filter(i => i.name === item.name).length > 0){
-            let itemNames = [];
-            this.nodeSlots.forEach(i => itemNames.push(i.name));
-            const i = itemNames.indexOf(item.name);
-            this.nodeSlots[i] = null;
-            addItemToProfile(this, item);
-            return true;
-        }
-        return false;
+global.removeNode = (profile, item) => {
+    if(profile.nodeSlots.filter(i => i.name === item.name).length > 0){
+        let itemNames = [];
+        profile.nodeSlots.forEach(i => itemNames.push(i.name));
+        const i = itemNames.indexOf(item.name);
+        profile.nodeSlots[i] = null;
+        addItemToProfile(profile, item);
+        return true;
     }
+    return false;
 }

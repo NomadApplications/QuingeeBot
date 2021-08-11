@@ -10,7 +10,14 @@ global.seasons = {
 };
 
 module.exports.init = async function(){
-
+    const list = client.guilds.cache.get(guildID);
+    list.members.cache.forEach(member => {
+        const user = member.user;
+        if(db.get(user.id) === null){
+            initUser(user);
+        }
+        db.set(user.id + ".daily", true);
+    })
 }
 
 const s = schedule.scheduleJob({hour: 0, minute: 0}, function () {

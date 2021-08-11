@@ -3,7 +3,7 @@ const ytSearch = require("yt-search");
 
 const queue = new Map();
 
-module.exports.startCommands = async function () {
+module.exports.startCommands = function () {
     client.ws.on("INTERACTION_CREATE", async (interaction) => {
 
         if (interaction.type === 3) return;
@@ -79,7 +79,7 @@ module.exports.startCommands = async function () {
                     try {
                         const connection = await voice_channel.join();
                         queueConstructor.connection = connection;
-                        await videoPlayer(guild, queueConstructor.songs[0]);
+                        await videoPlayer(guild, queueConstructor.songs[0], interaction);
                         await replySuccess(interaction, "Started playing music.");
                     } catch {
                         queue.delete(guild.id);
@@ -99,7 +99,9 @@ module.exports.startCommands = async function () {
     });
 }
 
-const videoPlayer = async (guild, song) => {
+const videoPlayer = async (guild, song, interaction) => {
+    if(interaction) await replySuccess(interaction, "Now playing music.");
+
     const songQueue = queue.get(guild.id);
 
     if (!song) {

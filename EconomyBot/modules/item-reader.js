@@ -7,7 +7,7 @@ global.crafted_items = {};
 global.daily = {};
 global.furniture = {};
 
-module.exports.initItems = async function(itemList){
+module.exports.initItems = function(itemList){
     for(let i = 0; i < itemList.length; i++){
         const category = itemList[i].category;
 

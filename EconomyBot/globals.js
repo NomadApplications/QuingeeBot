@@ -33,7 +33,12 @@ global.itemsPerPage = config.economy.shopItemsPerPage;
 global.homestead_commands = require("./modules/homesteads/homestead-commands");
 global.homestead_slash_commands = require("./modules/homesteads/slashcommands");
 
-global.quingeeItem = new Item("Quingee", -1, -1, -1, "Node");
+global.quingeeItem = new Item("quingee", -1, -1, -1, "Node");
+
+// MINIGAMES
+
+global.minigame_commands = require("./modules/mini-games/minigame_commands");
+global.minigame_slash_commands = require("./modules/mini-games/slashcommands");
 
 // CALENDAR
 
