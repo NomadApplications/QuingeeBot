@@ -1,5 +1,5 @@
-module.exports.init = async function(){
-    await getApp(guildID).commands.post({
+module.exports.init = function(){
+    getApp(guildID).commands.post({
         data: {
             name: "balance",
             description: "See your (or someone else's) current balance.",
@@ -20,14 +20,14 @@ module.exports.init = async function(){
         }
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
         data: {
             name: "daily",
             description: "Get your daily rewards.",
         },
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
         data: {
             name: "profile",
             description: "Manage your profiles",
@@ -48,7 +48,7 @@ module.exports.init = async function(){
         }
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
         data: {
             name: "inventory",
             description: "See your current inventory.",
@@ -58,6 +58,27 @@ module.exports.init = async function(){
                     description: "Which profile's inventory you would like to see. [not case-sensitive]",
                     required: false,
                     type: 3,
+                }
+            ]
+        }
+    })
+
+    getApp(guildID).commands.post({
+        data: {
+            name: "rename",
+            description: "Rename a profile!",
+            options: [
+                {
+                    name: "profile",
+                    description: "Which profile you would like to rename.",
+                    required: true,
+                    type: 3,
+                },
+                {
+                    name: "name",
+                    description: "New name for profile",
+                    required: true,
+                    type: 3
                 }
             ]
         }

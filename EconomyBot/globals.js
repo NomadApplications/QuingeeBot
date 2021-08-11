@@ -9,6 +9,8 @@ global.dotenv = require('dotenv').config();
 global.db = require("quick.db");
 global.schedule = require("node-schedule");
 
+global.moderationPrefix = config.moderationPrefix;
+
 // COLORS
 
 global.successColor = config.colors.successColor;
@@ -16,6 +18,10 @@ global.defaultColor = config.colors.defaultColor;
 global.errorColor = config.colors.errorColor;
 global.currencyColor = config.colors.currencyColor;
 global.musicColor = config.colors.musicColor;
+
+// MODERATION
+
+global.moderation_commands = require("./modules/moderation/moderation-commands");
 
 // ITEMS
 
@@ -74,6 +80,7 @@ global.guildID = config.ids.guildID;
 global.welcomeID = config.ids.welcomeID;
 global.rulesChannelID = config.ids.rulesChannelID;
 global.announcementChannelID = config.ids.announcementChannelID;
+global.modlogID = config.ids.modlogID;
 
 // EVENTS
 

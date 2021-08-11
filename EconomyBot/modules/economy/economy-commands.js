@@ -107,13 +107,13 @@ module.exports.startCommands = async function () {
                     profileName = "Profile1";
                 }
                 if (!args.name) {
-                    const profile = new EcoProfile(startingCurrency, [], 1, profileName, user);
+                    const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houseTypes.oneRoomCabin);
                     addNewProfile(user, profile);
                     await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
                     return;
                 }
                 profileName = args.name;
-                const profile = new EcoProfile(startingCurrency, [], 1, profileName, user);
+                const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houseTypes.oneRoomCabin);
                 addNewProfile(user, profile);
                 await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
             } else if (args.type === "list") {
@@ -186,6 +186,18 @@ module.exports.startCommands = async function () {
             await reply(interaction, embed);
         } else if (command === "inventory") {
             await inventoryManager(user, interaction, args);
+        } else if (command === "rename"){
+            const profile = getProfileByString(args.profile, user);
+            if (profile === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+
+            const p = profile;
+            p.title = args.name;
+            updateProfile(p);
+
+            await replySuccess(interaction, `You have successfully changed the name of ${profile.title`)
         }
     });
 }

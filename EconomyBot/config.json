@@ -1,4 +1,5 @@
 {
+  "moderationPrefix": "?",
   "websiteURL": "<https://google.com/>",
   "colors": {
     "successColor": "#4be045",
@@ -11,7 +12,8 @@
     "guildID": "846413849351290962",
     "welcomeID": "850811108025171969",
     "rulesChannelID": "851330725990760468",
-    "announcementChannelID": "852219497300754505"
+    "announcementChannelID": "852219497300754505",
+    "modlogID": "875082285974696016"
   },
   "calendar": {
     "monthLength": 24,

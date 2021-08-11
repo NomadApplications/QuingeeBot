@@ -46,7 +46,8 @@ module.exports.startCommands = function () {
 
             let nodeString = "";
             for (let i = 0; i < nodes.length; i++) {
-                nodeString += "**" + (i + 1) + "**: " + capitalize(nodes[i]) + "\n";
+                const nodeTitle = nodes[i] === "OPEN" ? "OPEN" : capitalize(nodes[i]);
+                nodeString += "**" + (i + 1) + "**: " + nodeTitle + "\n";
             }
 
             embed.addField("Node Slots:", nodeString, false);
@@ -105,7 +106,7 @@ module.exports.startCommands = function () {
                 await replyError(interaction, "There was an error adding this node.");
                 return;
             }
-            await replySuccess(interaction, `You have successfully added ${capitalize(item.name)} to your node slots in ${profile.title}. Type ``/home [profile]`` to see your current nodes.`);
+            await replySuccess(interaction, "You have successfully added " + capitalize(item.name) + " to your node slots in " + profile.title + ". Type ``/home [profile]`` to see your current nodes.");
         } else if (command === "removenode") {
             const profile = getProfileByString(args.profile, user);
             if (profile === null) {
@@ -113,7 +114,7 @@ module.exports.startCommands = function () {
                 return;
             }
 
-            const items = profile.nodeSlots.filter(i => i.name === args.name);
+            const items = profile.nodeSlots.filter(i => i.name === args.item);
             if (items.length <= 0) {
                 await replyError(interaction, "Please enter an item that is currently in a slot. If you would like to see your current node slots, type ``/home [profile]``.");
                 return;
@@ -127,7 +128,7 @@ module.exports.startCommands = function () {
                 return;
             }
 
-            await replySuccess(interaction, `You have successfully removed ${capitalize(item.name)} from your node slots in ${profile.title}. Type ``/home ${profile.title}`` to see your current nodes.`);
+            await replySuccess(interaction, "You have successfully removed " + capitalize(item.name) + " from your node slots in " + profile.title + ". Type ``/home [profile]`` to see your current nodes.");
         } else if (command === "upgrade") {
             const profile = getProfileByString(args.profile, user);
             if (profile === null) {

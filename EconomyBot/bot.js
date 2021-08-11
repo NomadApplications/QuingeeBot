@@ -35,6 +35,8 @@ client.on("ready", async () => {
 
     minigame_commands.startCommands();
     minigame_slash_commands.init();
+
+    moderation_commands.startCommands();
 })
 
 client.on("message", message => {
