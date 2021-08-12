@@ -70,4 +70,19 @@ module.exports.init = function() {
             ]
         }
     })
+
+    getApp(guildID).commands.post({
+        data: {
+            name: "claimnodes",
+            description: "Claim all nodes from a specific profile",
+            options: [
+                {
+                    name: "profile",
+                    description: "Which profile you would like to claim from.",
+                    required: true,
+                    type: 3
+                }
+            ]
+        }
+    })
 }

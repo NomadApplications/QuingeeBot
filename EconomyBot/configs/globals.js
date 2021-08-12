@@ -21,30 +21,36 @@ global.errorColor = config.colors.errorColor;
 global.currencyColor = config.colors.currencyColor;
 global.musicColor = config.colors.musicColor;
 
+// CRAFTING
+
+global.crafting_commands = require("../modules/crafting/crafting-commands");
+global.crafting_slash_commands = require("../modules/crafting/crafting-slashcommands");
+global.crafting_manager = require("../modules/crafting/crafting-manager");
+
 // MODERATION
 
-global.moderation_commands = require("./modules/moderation/moderation-commands");
+global.moderation_commands = require("../modules/moderation/moderation-commands");
 
 // ITEMS
 
 global.items = itemConfig.items;
-global.itemReader = require("./modules/item-reader");
+global.itemReader = require("../modules/item-reader");
 
 // SHOPS
 
-global.shop_slash_commands = require("./modules/shop/slashcommands");
-global.shop_commands = require("./modules/shop/shop-commands");
+global.shop_slash_commands = require("../modules/shop/slashcommands");
+global.shop_commands = require("../modules/shop/shop-commands");
 global.itemsPerPage = config.economy.shopItemsPerPage;
 
 // HOMES
 
-global.homestead_commands = require("./modules/homesteads/homestead-commands");
-global.homestead_slash_commands = require("./modules/homesteads/slashcommands");
+global.homestead_commands = require("../modules/homesteads/homestead-commands");
+global.homestead_slash_commands = require("../modules/homesteads/slashcommands");
 
 // MINIGAMES
 
-global.minigame_commands = require("./modules/mini-games/minigame_commands");
-global.minigame_slash_commands = require("./modules/mini-games/slashcommands");
+global.minigame_commands = require("../modules/mini-games/minigame_commands");
+global.minigame_slash_commands = require("../modules/mini-games/slashcommands");
 global.timeBetweenMinigames = config.minigames.timeBetweenMinigames;
 
 // CALENDAR
@@ -52,9 +58,9 @@ global.timeBetweenMinigames = config.minigames.timeBetweenMinigames;
 global.seasonEvents = config.calendar.seasonEvents;
 global.seasonLength = config.calendar.seasonLength;
 global.monthLength = config.calendar.monthLength;
-global.season_manager = require("./modules/seasons/season-manager");
-global.season_commands = require("./modules/seasons/season-commands");
-global.season_slash_commands = require("./modules/seasons/slashcommands");
+global.season_manager = require("../modules/seasons/season-manager");
+global.season_commands = require("../modules/seasons/season-commands");
+global.season_slash_commands = require("../modules/seasons/slashcommands");
 
 // ECONOMY
 
@@ -64,14 +70,14 @@ global.startingCurrency = config.economy.startingCurrency;
 global.startingProfileName = config.economy.startingProfileName;
 global.minDailyReward = config.economy.daily.min;
 global.maxDailyReward = config.economy.daily.max;
-global.economy_manager = require("./modules/economy/economy-manager");
-global.economy_commands = require("./modules/economy/economy-commands");
-global.economy_slash_commands = require("./modules/economy/slashcommands");
+global.economy_manager = require("../modules/economy/economy-manager");
+global.economy_commands = require("../modules/economy/economy-commands");
+global.economy_slash_commands = require("../modules/economy/slashcommands");
 
 // MUSIC
 
-global.music_slash_commands = require("./modules/music/slashcommands");
-global.music_commands = require("./modules/music/music-commands");
+global.music_slash_commands = require("../modules/music/slashcommands");
+global.music_commands = require("../modules/music/music-commands");
 
 // IDs
 
@@ -85,8 +91,8 @@ global.modlogID = config.ids.modlogID;
 
 // EVENTS
 
-global.join_leave = require("./modules/join-leave");
-global.main_slash_commands = require("./modules/main_slashcommands");
+global.join_leave = require("../modules/join-leave");
+global.main_slash_commands = require("../modules/main_slashcommands");
 
 global.getMentionFromID = function (id) {
     return `<@${id}>`;

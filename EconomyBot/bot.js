@@ -1,4 +1,4 @@
-require("./globals");
+require("./configs/globals");
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user.username}`);
@@ -37,6 +37,9 @@ client.on("ready", async () => {
     minigame_slash_commands.init();
 
     moderation_commands.startCommands();
+
+    crafting_slash_commands.init();
+    crafting_commands.startCommands();
 })
 
 client.on("message", message => {

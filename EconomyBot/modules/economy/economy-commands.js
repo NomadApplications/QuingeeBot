@@ -203,11 +203,6 @@ async function inventoryManager(user, interaction, args) {
     await reply(interaction, "Inventory below:");
 
     const embed = getPage(0, profile);
-
-    if(initPages(profile).length === 1) {
-        channel.send(embed);
-        return;
-    }
     sendEmbed(embed, channel, 0, profile, user);
 }
 

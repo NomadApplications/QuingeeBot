@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "items": [
+        "stone",
+        "iron"
+      ],
+      "result": "forge"
+    }
+  ]
+}
