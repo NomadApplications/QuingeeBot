@@ -13,11 +13,20 @@ async function sendWelcome(member){
     const channel = member.guild.channels.cache.get(welcomeID);
 
     const rules = member.guild.channels.cache.get(rulesChannelID);
-    channel.send("Thanks for joining " + getMentionFromID(member.id) + "! You can check out the rules in " + rules.toString() + "! If you are interested in what we do, check out our website at " + websiteURL);
+    const embed = new Discord.MessageEmbed()
+        .setTitle("Welcome! 🎉")
+        .setColor(defaultColor)
+        .setDescription("Thanks for joining " + getMentionFromID(member.id) + "! You can check out the rules in " + rules.toString() + "! If you are interested in what we do, check out our website at " + websiteURL + ".");
+    channel.send(embed);
 }
 
 async function sendLeave(member){
     const channel = member.guild.channels.cache.get(welcomeID);
 
-    channel.send("Thanks for visiting " + getMentionFromID(member.id) + " we hope you enjoyed your stay!");
+    const embed = new Discord.MessageEmbed()
+        .setTitle("Goodbye! 👋")
+        .setColor(defaultColor)
+        .setDescription("Thanks for visiting " + getMentionFromID(member.id) + " we hope you enjoyed your stay!");
+
+    channel.send(embed);
 }

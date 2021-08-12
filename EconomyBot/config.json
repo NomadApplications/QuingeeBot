@@ -4,7 +4,7 @@
   "colors": {
     "successColor": "#4be045",
     "defaultColor": "#9728FF",
-    "errorColor": "#EF2813",
+    "errorColor": "#ff0000",
     "currencyColor": "#ffb624",
     "musicColor": "#8813EF"
   },
@@ -14,6 +14,9 @@
     "rulesChannelID": "851330725990760468",
     "announcementChannelID": "852219497300754505",
     "modlogID": "875082285974696016"
+  },
+  "minigames": {
+    "timeBetweenMinigames": 10
   },
   "calendar": {
     "monthLength": 24,

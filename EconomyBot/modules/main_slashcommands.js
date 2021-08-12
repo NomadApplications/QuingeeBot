@@ -19,7 +19,16 @@ module.exports.init = async function(){
                 .setColor(defaultColor);
 
             for(let i = 0; i < commands.length; i++){
-                embed.addField(`/${commands[i].name}`, `${commands[i].description}`);
+                let options = [];
+                if(commands[i].options === null || commands[i].options.length === 0){
+                    embed.addField(`/${commands[i].name}`, `${commands[i].description}`);
+                } else {
+                    commands[i].options.forEach(o => {
+                        options.push(o.name);
+                    })
+                    embed.addField(`/${commands[i].name} ${options}`, `${commands[i].description}`);
+                }
+
             }
             await reply(interaction, embed);
         }

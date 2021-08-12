@@ -18,82 +18,7 @@ module.exports.startCommands = async function () {
             }
         }
 
-        if (command === "balance") {
-            if (!db.get(user.id + ".profiles")) {
-                initUser(user);
-            }
-
-            if (!args.name) {
-                const profiles = db.get(user.id + ".profiles");
-                let profile = null;
-                if (Array.isArray(profiles)) {
-                    profile = profiles[0];
-                } else {
-                    profile = profiles;
-                }
-                let balance = profile.currencyAmount;
-
-                if (balance === null) balance = 0;
-
-                await replyCurrency(interaction, `${channel.guild.users.cache.get(getUserById(profile.id, profile.guildId)).username} currently has ${balance} ${currencyName}`);
-
-                return;
-            }
-
-            const mentionedUserID = args.name.split("<@!").pop().slice(0, -1);
-
-            if (!args.name.includes("<@") || isNaN(mentionedUserID)) {
-                await replyError(interaction, "You need to **mention** a member.");
-                return;
-            }
-
-            const mentionedUser = client.guilds.cache.get(interaction.guild_id).members.cache.get(mentionedUserID).user;
-
-            if (!mentionedUser) {
-                await replyError(interaction, "You need to mention a valid member.");
-                return;
-            }
-
-            if (!args.profile) {
-
-                const profiles = db.get(user.id + ".profiles");
-                let profile = null;
-                if (Array.isArray(profiles)) {
-                    profile = profiles[0];
-                } else {
-                    profile = profiles;
-                }
-                const balance = profile.currencyAmount;
-
-                await replyCurrency(interaction, `${getUserById(profile.id, profile.guildId).username} currently has ${balance} ${currencyName}`);
-
-                return;
-            }
-
-            const profiles = db.get(mentionedUser.id + ".profiles");
-
-            if (!Array.isArray(profiles)) {
-                await replyError(interaction, "There is only one profile for this user, Main. Please just use /balance [user]");
-                return;
-            }
-
-            let titles = [];
-
-            for (let i = 0; i < profiles.length; i++) {
-                titles.push(profiles[i].title.toLowerCase());
-            }
-
-            if (!titles.includes(args.profile)) {
-                await replyError(interaction, "You need to specify a valid profile name.");
-                return;
-            }
-
-            const profile = profiles[titles.indexOf(args.profile)];
-
-            const balance = profile.currencyAmount;
-
-            await replyCurrency(interaction, `${getUserById(profile.id, profile.guildId).username} currently has ${balance} ${currencyName} in ${profile.title}`);
-        } else if (command === "profile") {
+         if (command === "profile") {
             if (!db.get(user.id + ".profiles")) {
                 initUser(user);
             }
@@ -122,7 +47,7 @@ module.exports.startCommands = async function () {
                 const embed = new Discord.MessageEmbed()
                     .setTitle("Quingee Profiles")
                     .setColor(currencyColor)
-                    .setDescription("Your profiles:");
+                    .setDescription("``/home [profile]`` to see your home stats. Your profiles:");
 
                 if (!Array.isArray(profiles)) {
                     embed.addField(profiles.title, profiles.currencyAmount, false);
@@ -131,12 +56,43 @@ module.exports.startCommands = async function () {
                 }
                 for (let i = 0; i < profiles.length; i++) {
                     const profile = profiles[i];
-                    embed.addField(profile.title, profile.currencyAmount, false);
+                    embed.addField(profile.title, `$${profile.currencyAmount}\n${profile.inventory.length} items`, false);
                 }
 
                 await reply(interaction, embed);
+            } else if (args.type === "delete"){
+                if(!args.name){
+                    await replyError(interaction, "Please specify a profile name.");
+                    return;
+                }
+
+                const profile = getProfileByString(args.name, user);
+                if (profile === null) {
+                    await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                    return;
+                }
+                if(profile.title === "Main" || db.get(user.id + ".profiles").length === 1){
+                    await replyError(interaction, "You cannot change the name of your Main profile.");
+                    return;
+                }
+
+                const list = db.get(user.id + ".profiles");
+                const index = list.findIndex(x => x.title === profile.title);
+                if(index === -1) {
+                    await replyError(interaction, "There was an error.");
+                    return;
+                }
+                profile.inventory.forEach(i => {
+                    list[0].inventory.push(i);
+                })
+                list[0].currencyAmount += profile.currencyAmount;
+
+                list.splice(index, 1);
+                db.set(user.id + ".profiles", list);
+
+                await replySuccess(interaction, "You have successfully removed " + profile.title + ". All currency and items were transferred to Main.");
             } else {
-                await replyError(interaction, "You must mention a valid option [create, list].");
+                await replyError(interaction, "You must mention a valid option [create, list, delete].");
             }
         } else if (command == "daily") {
             if (!db.get(user.id)) initUser(user);
@@ -154,7 +110,6 @@ module.exports.startCommands = async function () {
                 await replyError(interaction, "You've already redeemed your daily reward! Please wait until tomorrow to redeem again. " + print + " remaining.");
                 return;
             }
-            db.set(user.id + ".daily", false);
 
             let addedTo = [];
             const profiles = db.get(user.id + ".profiles");
@@ -162,15 +117,24 @@ module.exports.startCommands = async function () {
                 for(let i = 0; i < profiles.length; i++){
                     let m = 0;
                     profiles[i].nodeSlots.forEach(node => { if(node !== null) m++; })
+                    if(m === 0) continue;
                     addCurrency(profiles[i], dailyReward * m);
                     addedTo.push([profiles[i], m]);
                 }
             } else {
                 let m = 0;
                 profiles.nodeSlots.forEach(node => { if(node !== null) m++; })
-                profiles.addCurrency(profiles, dailyReward * m);
-                addedTo.push([profiles, m]);
+                if(m !== 0){
+                    profiles.addCurrency(profiles, dailyReward * m);
+                    addedTo.push([profiles, m]);
+                }
             }
+
+            if(addedTo.length === 0){
+                await replyError(interaction, "There are no nodes that you can add currency to.");
+                return;
+            }
+            db.set(user.id + ".daily", false);
 
             const embed = new Discord.MessageEmbed()
                 .setTitle("Daily Reward")
@@ -192,12 +156,26 @@ module.exports.startCommands = async function () {
                 await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
                 return;
             }
+            if(profile.title === "Main"){
+                await replyError(interaction, "You cannot change the name of your Main profile.");
+                return;
+            }
 
+            const previousTitle = profile.title;
             const p = profile;
             p.title = args.name;
-            updateProfile(p);
 
-            await replySuccess(interaction, `You have successfully changed the name of ${profile.title`)
+            const profiles = db.get(user.id + ".profiles")
+            if(Array.isArray(profiles)){
+                const index = profiles.findIndex(x => x.title === previousTitle);
+                const list = db.get(user.id + ".profiles");
+                list[index] = p;
+                db.set(user.id + ".profiles", list);
+            } else {
+                db.set(user.id + ".profiles", p);
+            }
+
+            await replySuccess(interaction, `You have successfully changed the name of ${args.profile} to ${p.title}!`);
         }
     });
 }
@@ -309,21 +287,24 @@ function getPage(pageNumber, profile) {
 
     if (pageNumber > pages.length) return null;
 
-    for (let i = 0; i < pages[pageNumber].length; i++) {
-        const item = pages[pageNumber][i][0];
-        let sell = item.sell.toString();
-        if(sell === "-1") sell = "N/A";
+    if(pages[pageNumber].length === 0){
+        embed.setDescription(profile.title + " contains no items.");
+    } else {
+        for (let i = 0; i < pages[pageNumber].length; i++) {
+            const item = pages[pageNumber][i][0];
+            let sell = item.sell.toString();
+            if(sell === "-1") sell = "N/A";
 
-        embed.addField("x" + pages[pageNumber][i][1] + " " + capitalize(item.name), `**Sell**: *${sell}*\n**Category**: *${capitalize(item.category)} ${getEmojiByCategory(item)}*`, true);
+            embed.addField("x" + pages[pageNumber][i][1] + " " + capitalize(item.name), `**Sell**: *${sell}*\n**Category**: *${capitalize(item.category)} ${getEmojiByCategory(item)}*`, true);
+        }
+        embed.setFooter("Page " + (pageNumber+1) + " / " + maximumPages);
     }
-    embed.setFooter("Page " + (pageNumber+1) + " / " + maximumPages);
 
     return embed;
 }
 
 global.replyCurrency = async (interaction, response) => {
     const embed = new Discord.MessageEmbed()
-        .setTitle("Quingee")
         .setColor(currencyColor)
         .setDescription(response);
 

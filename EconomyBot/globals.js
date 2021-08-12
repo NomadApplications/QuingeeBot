@@ -9,6 +9,8 @@ global.dotenv = require('dotenv').config();
 global.db = require("quick.db");
 global.schedule = require("node-schedule");
 
+global.moment = require("moment");
+
 global.moderationPrefix = config.moderationPrefix;
 
 // COLORS
@@ -39,12 +41,11 @@ global.itemsPerPage = config.economy.shopItemsPerPage;
 global.homestead_commands = require("./modules/homesteads/homestead-commands");
 global.homestead_slash_commands = require("./modules/homesteads/slashcommands");
 
-global.quingeeItem = new Item("quingee", -1, -1, -1, "Node");
-
 // MINIGAMES
 
 global.minigame_commands = require("./modules/mini-games/minigame_commands");
 global.minigame_slash_commands = require("./modules/mini-games/slashcommands");
+global.timeBetweenMinigames = config.minigames.timeBetweenMinigames;
 
 // CALENDAR
 

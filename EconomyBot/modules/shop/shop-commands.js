@@ -54,6 +54,12 @@ module.exports.startCommands = async function () {
             if(db.get(user.id) === null) initUser(user);
             const item = getItemByName(args.item);
 
+            const profile = getProfileByString(args.profile, user);
+            if (profile === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+
             if (item === null || item === undefined) {
                 await replyError(interaction, "Please say a valid item. To view all items and prices, type /shop.");
                 return;
@@ -64,23 +70,19 @@ module.exports.startCommands = async function () {
                 return;
             }
 
-            const profiles = db.get(user.id + ".profiles");
-            let profile = null;
-            if(Array.isArray(profiles)){
-                profile = profiles[0];
-            } else {
-                profile = profiles;
-            }
-
-            let amount = 1;
+            let amount = 0;
 
             if(args.quantity){
                 if(isNaN(args.quantity)){
                     await replyError(interaction, "Please enter a valid number.");
                     return;
                 }
-                amount = 0;
-                amount += parseInt(args.quantity);
+                amount = parseInt(args.quantity);
+            }
+
+            if(amount <= 0){
+                await replyError(interaction, "Please specify a number above 0.");
+                return;
             }
 
 
@@ -122,15 +124,97 @@ module.exports.startCommands = async function () {
                 profile = profiles;
             }
 
-
             const valid = profile.inventory.findIndex(x => x.name === item.name) !== -1;
 
+            let amount = 0;
+            for(let i = 0; i < profile.inventory.length; i++){
+                if(profile.inventory[i].name === item.name){
+                    amount++;
+                }
+            }
+
+            let f = 0;
+
+            if(isNaN(args.amount)){
+                if(args.amount === "max"){
+                    f = amount;
+                } else {
+                    await replyError(interaction, "Please specify a valid amount ``[number, max]``.");
+                    return;
+                }
+            } else {
+                let c = parseInt(args.amount);
+                if(c > amount || c <= 0){
+                    await replyError(interaction, "Please specify a valid amount (check ``/inventory [profile]``");
+                    return;
+                }
+                f = c;
+            }
+
+            if(f <= 0){
+                await replyError(interaction, "Please specify a valid amount (check ``/inventory [profile]``");
+                return;
+            }
+
             if (valid) {
-                removeItem(profile, item);
-                await replyCurrency(interaction, "You have successfully sold **" + capitalize(item.name) + "** for " + item.sell + "! You now have a total of " + profile.currencyAmount + " in " + profile.title + ".");
+                for(let i = 0; i < f; i++){
+                    removeItem(profile, item);
+                }
+                await replyCurrency(interaction, "You have successfully sold x" + f + " **" + capitalize(item.name) + "** for " + item.sell * f + "! You now have a total of " + profile.currencyAmount + " in " + profile.title + ".");
                 return;
             } else {
                 await replyError(interaction, "You do not have **" + capitalize(item.name) + "** in your inventory. Type ``/inventory`` to see your inventory");
+                return;
+            }
+        } else if (command === "transfer"){
+            const profile1 = getProfileByString(args.profile1, user);
+            const profile2 = getProfileByString(args.profile2, user);
+            if (profile1 === null || profile2 === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+
+            if(isNaN(args.amount)){
+                await replyError(interaction, "Please specify a valid number.");
+                return;
+            }
+
+            const amount = parseInt(args.amount);
+
+            if(amount <= 0){
+                await replyError(interaction, "Please specify a number over 0.");
+                return;
+            }
+
+            removeCurrency(profile1, amount);
+            addCurrency(profile2, amount);
+
+            await replySuccess(interaction, "You have successfully transferred **$" + amount + "** from **" + profile1.title + "** to **" + profile2.title + "**.");
+        } else if (command === "itemtransfer"){
+            const profile1 = getProfileByString(args.profile1, user);
+            const profile2 = getProfileByString(args.profile2, user);
+            if (profile1 === null || profile2 === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+
+            const item = getItemByName(args.item);
+
+            if (item === null || item === undefined) {
+                await replyError(interaction, "Please say a valid item. To view all items and prices, type ``/shop``.");
+                return;
+            }
+
+            const valid = profile1.inventory.findIndex(x => x.name === item.name) !== -1;
+
+            if(valid){
+                removeItem(profile1, item);
+                giveItem(profile2, item, 1);
+
+                await replySuccess(interaction, "Successfully transferred **" + capitalize(item.name) + "** from **" + profile1.title + "** to **" + profile2.title + "**.");
+                return;
+            } else {
+                await replyError(interaction, "You do not have **" + capitalize(item.name) + "** in **" + profile1.title + "**.");
                 return;
             }
         }

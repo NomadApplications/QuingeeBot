@@ -83,11 +83,9 @@ module.exports.startCommands = function () {
                 return;
             }
 
-            let item = null;
-            if (Array.isArray(items)) item = items[0];
-            else item = items;
+            let item = Array.isArray(items) ? items[0] : items;
 
-            let slot = 1;
+            let slot = -1;
 
             if (profile.nodeSlots.length === 1) {
                 await replyError(interaction, "You can only set a node if you have more than one node.");
@@ -99,6 +97,11 @@ module.exports.startCommands = function () {
                     slot = i;
                     break;
                 }
+            }
+
+            if(slot === -1){
+                await replyError(interaction, "You must remove a node or upgrade your house before adding any more.");
+                return;
             }
 
             const added = setNode(profile, item, slot);
@@ -114,13 +117,18 @@ module.exports.startCommands = function () {
                 return;
             }
 
-            const items = profile.nodeSlots.filter(i => i.name === args.item);
-            if (items.length <= 0) {
+            let item = null;
+            for(let i = 0; i < profile.nodeSlots.length; i++){
+                if(profile.nodeSlots[i] === null) continue;
+                if(profile.nodeSlots[i].name === args.item){
+                    item = profile.nodeSlots[i];
+                    break;
+                }
+            }
+            if (item === null) {
                 await replyError(interaction, "Please enter an item that is currently in a slot. If you would like to see your current node slots, type ``/home [profile]``.");
                 return;
             }
-
-            let item = Array.isArray(items) ? items[0] : items;
 
             const removed = removeNode(profile, item);
             if (!removed) {
@@ -178,7 +186,6 @@ module.exports.startCommands = function () {
                             if(previousNodes[i] === null) continue;
                             newNodes.push(previousNodes[i]);
                         }
-                        console.log(newNodes);
                         for(let i = 0; i < houseType.nodeAmount; i++){
                             if(!newNodes[i]) newNodes.push(null);
                         }

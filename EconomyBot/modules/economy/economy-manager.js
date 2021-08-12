@@ -100,7 +100,6 @@ global.EcoProfile = class {
         for(let i = 0; i < this.houseType.nodeAmount; i++){
             this.nodeSlots.push(null);
         }
-        this.nodeSlots[0] = quingeeItem;
     }
 }
 

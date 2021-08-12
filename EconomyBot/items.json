@@ -2,7 +2,7 @@
   "items": [
     {
       "name": "clay",
-      "buy": -1,
+      "buy": 0,
       "sell": 1,
       "season": -1,
       "category": "fishing"

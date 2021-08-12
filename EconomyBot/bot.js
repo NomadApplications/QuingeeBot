@@ -103,7 +103,6 @@ function initCommands() {
 
     global.replyError = async (interaction, response) => {
         const embed = new Discord.MessageEmbed()
-            .setTitle("Quingee")
             .setColor(errorColor)
             .setDescription(response);
 
@@ -112,7 +111,6 @@ function initCommands() {
 
     global.replySuccess = async (interaction, response) => {
         const embed = new Discord.MessageEmbed()
-            .setTitle("Quingee")
             .setColor(successColor)
             .setDescription(response);
 

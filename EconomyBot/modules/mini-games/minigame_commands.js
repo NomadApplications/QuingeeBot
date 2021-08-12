@@ -1,3 +1,7 @@
+const fishedRecently = [];
+const minedRecently = [];
+const gatheredRecently = [];
+
 module.exports.startCommands = function () {
     client.ws.on("INTERACTION_CREATE", async (interaction) => {
 
@@ -23,6 +27,19 @@ module.exports.startCommands = function () {
         }
 
         if (command === "mine") {
+            let found = false;
+            let seconds = 0;
+            for(let i = 0; i < minedRecently.length; i++){
+                if(minedRecently[i][0] === user.id){
+                    found = true;
+                    seconds = minedRecently[i][1];
+                }
+            }
+            if (found) {
+                await replyError(interaction, "Please wait " + seconds + " seconds before using this command again.");
+                return;
+            }
+
             const profiles = db.get(user.id + ".profiles");
             let profile = Array.isArray(profiles) ? profiles[0] : profiles;
 
@@ -30,6 +47,25 @@ module.exports.startCommands = function () {
                 .setTitle("⛏ Mining Mini-game")
                 .setColor(defaultColor)
                 .setDescription("Sift through the stones!");
+
+            minedRecently.push([user.id, timeBetweenMinigames]);
+            let interval = setInterval(function(){
+                for(let i = 0; i < minedRecently.length; i++){
+                    if(minedRecently[i][0] === user.id) {
+                        minedRecently[i][1] -= 1;
+                        break;
+                    }
+                }
+            }, 1000)
+            setTimeout(function(){
+                clearInterval(interval);
+                for(let i = 0; i < minedRecently.length; i++){
+                    if(minedRecently[i][0] === user.id){
+                        minedRecently.splice(i, 1);
+                        break;
+                    }
+                }
+            }, timeBetweenMinigames * 1000);
 
             await reply(interaction, "Mini-game below:");
             channel.send(embed).then(embedMessage => {
@@ -59,6 +95,19 @@ module.exports.startCommands = function () {
                 });
             })
         } else if (command === "fish") {
+            let found = false;
+            let seconds = 0;
+            for(let i = 0; i < fishedRecently.length; i++){
+                if(fishedRecently[i][0] === user.id){
+                    found = true;
+                    seconds = fishedRecently[i][1];
+                }
+            }
+            if (found) {
+                await replyError(interaction, "Please wait " + seconds + " seconds before using this command again.");
+                return;
+            }
+
             const profiles = db.get(user.id + ".profiles");
             let profile = Array.isArray(profiles) ? profiles[0] : profiles;
 
@@ -67,10 +116,37 @@ module.exports.startCommands = function () {
                 .setColor(defaultColor)
                 .setDescription("Pull the pole up at the right time for good rewards!");
 
+            fishedRecently.push([user.id, timeBetweenMinigames]);
+            let interval = setInterval(function(){
+                for(let i = 0; i < fishedRecently.length; i++){
+                    if(fishedRecently[i][0] === user.id) {
+                        fishedRecently[i][1] -= 1;
+                        break;
+                    }
+                }
+            }, 1000)
+            setTimeout(function(){
+                clearInterval(interval);
+                for(let i = 0; i < fishedRecently.length; i++){
+                    if(fishedRecently[i][0] === user.id){
+                        fishedRecently.splice(i, 1);
+                        break;
+                    }
+                }
+            }, timeBetweenMinigames * 1000);
+
+
             await reply(interaction, "Mini-game below:");
 
             channel.send(embed).then(embedMessage => {
-                let timer = setInterval(function(){
+                setTimeout(function(){
+                    const timer = setTimeout(function(){
+                        embed.setColor(errorColor);
+                        embed.setDescription("Oops! You missed your chance! Try again soon!");
+                        embedMessage.edit(embed).then(edited => {
+                            edited.reactions.removeAll();
+                        });
+                    }, getRandomByRange(2000, 4000))
                     embed.setColor(successColor);
                     embedMessage.edit(embed).then(edited => {
                         edited.react("🎣");
@@ -79,6 +155,8 @@ module.exports.startCommands = function () {
                             max: 1,
                             time: 30000
                         }).then(collected => {
+                            if(collected.first().emoji.name !== "🎣") return;
+                            clearTimeout(timer);
                             embedMessage.reactions.removeAll();
 
                             const randomItem = fishing[getRandom(Object.keys(fishing))];
@@ -95,10 +173,22 @@ module.exports.startCommands = function () {
                             return;
                         });
                     });
-                    clearInterval(timer);
                 }, getRandomByRange(3000, 6000));
             })
         } else if (command === "gather") {
+            let found = false;
+            let seconds = 0;
+            for(let i = 0; i < gatheredRecently.length; i++){
+                if(gatheredRecently[i][0] === user.id){
+                    found = true;
+                    seconds = gatheredRecently[i][1];
+                }
+            }
+            if (found) {
+                await replyError(interaction, "Please wait " + seconds + " seconds before using this command again.");
+                return;
+            }
+
             const profiles = db.get(user.id + ".profiles");
             let profile = Array.isArray(profiles) ? profiles[0] : profiles;
 
@@ -106,6 +196,25 @@ module.exports.startCommands = function () {
                 .setTitle("🧤 Gathering Mini-game")
                 .setColor(defaultColor)
                 .setDescription("Roll the dice for good rewards!");
+
+            gatheredRecently.push([user.id, timeBetweenMinigames]);
+            let interval = setInterval(function(){
+                for(let i = 0; i < gatheredRecently.length; i++){
+                    if(gatheredRecently[i][0] === user.id) {
+                        gatheredRecently[i][1] -= 1;
+                        break;
+                    }
+                }
+            }, 1000)
+            setTimeout(function(){
+                clearInterval(interval);
+                for(let i = 0; i < gatheredRecently.length; i++){
+                    if(gatheredRecently[i][0] === user.id){
+                        gatheredRecently.splice(i, 1);
+                        break;
+                    }
+                }
+            }, timeBetweenMinigames * 1000);
 
             await reply(interaction, "Mini-game below:");
 
