@@ -85,12 +85,13 @@ module.exports.startCommands = function () {
 
             let item = Array.isArray(items) ? items[0] : items;
 
-            let slot = -1;
-
-            if (profile.nodeSlots.length === 1) {
-                await replyError(interaction, "You can only set a node if you have more than one node.");
+            const nodeItem = getNodeItem(item.name);
+            if(nodeItem === null){
+                await replyError(interaction, "You must supply a node item.");
                 return;
             }
+
+            let slot = -1;
 
             for (let i = 0; i < profile.nodeSlots.length; i++) {
                 if (profile.nodeSlots[i] === null) {
@@ -204,8 +205,79 @@ module.exports.startCommands = function () {
                     return;
                 })
             })
+        } else if (command === "claimnodes"){
+            const profile = getProfileByString(args.profile, user);
+            if (profile === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
+
+            if(profile.nodeSlots.length <= 0){
+                await replyError(interaction, "You dont have any node slots available.");
+                return;
+            }
+
+            if(profile.claimedNodes){
+                let midnight = new Date();
+                midnight.setHours(24, 0, 0, 0);
+
+                let time = (midnight.getTime() - new Date().getTime()) / 1000 / 60;
+                time = Math.floor(time);
+                const print = convert(time);
+
+                await replyError(interaction, "You already claimed your nodes for this profile! Please wait Please wait until tomorrow to redeem again. " + print + " remaining.");
+                return;
+            }
+
+            setClaimedNodes(profile, true);
+
+            let added = [];
+
+            for(let i = 0; i < profile.nodeSlots.length; i++){
+                const n = profile.nodeSlots[i];
+                const nodeItem = getNodeItem(n.name);
+                if(nodeItem === null) continue;
+
+                const c = getItemByName(nodeItem.item);
+                if(c === null) continue;
+
+                let z = [];
+                const a = getRandomIntInclusive(nodeItem.amountMin, nodeItem.amountMax);
+                for(let i = 0; i < a; i++){
+                    addItemToProfile(profile, c);
+                    z.push(c.name);
+                }
+                added.push([n.name, z]);
+            }
+
+            if(added.length === 0){
+                await replyError(interaction, "There was an error.");
+                return;
+            }
+
+            const embed = new Discord.MessageEmbed()
+                .setTitle("Claimed Nodes")
+                .setColor(currencyColor)
+                .setDescription("Nodes that you have claimed");
+
+            for(let i = 0; i < added.length; i++){
+                embed.addField(capitalize(added[i][0]), "x" + added[i][1].length + " " + added[i][1][0]);
+            }
+
+            await reply(interaction, embed);
         }
     });
+}
+
+const node_config = require("../../configs/nodes.json");
+
+function getNodeItem(name){
+    for(let i = 0; i < node_config.nodes.length; i++){
+        if(node_config.nodes[i].name === name){
+            return node_config.nodes[i];
+        }
+    }
+    return null;
 }
 
 global.getProfileByString = function (title, user) {

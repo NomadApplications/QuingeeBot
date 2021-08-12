@@ -17,6 +17,9 @@ module.exports.init = async function(){
             initUser(user);
         }
         db.set(user.id + ".daily", true);
+        db.get(user.id + ".profiles").forEach(profile => {
+            setClaimedNodes(profile, false);
+        });
     })
 }
 
@@ -40,6 +43,9 @@ global.newDay = function(){
             initUser(user);
         }
         db.set(user.id + ".daily", true);
+        db.get(user.id + ".profiles").forEach(profile => {
+            setClaimedNodes(profile, false);
+        });
     })
 
     db.add("seasons.currentDay", 1);

@@ -203,6 +203,11 @@ async function inventoryManager(user, interaction, args) {
     await reply(interaction, "Inventory below:");
 
     const embed = getPage(0, profile);
+
+    if(initPages(profile).length === 1) {
+        channel.send(embed);
+        return;
+    }
     sendEmbed(embed, channel, 0, profile, user);
 }
 
@@ -307,4 +312,4 @@ global.replyCurrency = async (interaction, response) => {
 }
 
 
-const convert = (n) => `0${n / 60 ^ 0}`.slice(-2) + ':' + ('0' + n % 60).slice(-2);
+global.convert = (n) => `0${n / 60 ^ 0}`.slice(-2) + ':' + ('0' + n % 60).slice(-2);

@@ -100,7 +100,15 @@ global.EcoProfile = class {
         for(let i = 0; i < this.houseType.nodeAmount; i++){
             this.nodeSlots.push(null);
         }
+
+        this.claimedNodes = false;
     }
+}
+
+global.setClaimedNodes = (profile, bool) => {
+    const p = profile;
+    p.claimedNodes = bool;
+    updateProfile(p);
 }
 
 global.setNode = (profile, item, slot) => {

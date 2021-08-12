@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {
+      "name": "forge",
+      "item": "stone",
+      "amountMin": 1,
+      "amountMax": 1
+    }
+  ]
+}

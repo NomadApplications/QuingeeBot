@@ -250,7 +250,7 @@ function getRandom(arr){
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function getRandomIntInclusive(min, max){
+global.getRandomIntInclusive = (min, max) => {
     min = Math.min(min, max);
     max = Math.max(max, min);
     return Math.floor(Math.random() * (max - min + 1)) + min;
