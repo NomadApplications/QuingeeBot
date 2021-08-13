@@ -12,6 +12,12 @@ module.exports.init = async function() {
             description: "Sell any items in your inventory.",
             options: [
                 {
+                    name: "profile",
+                    description: "Which profile you would like to use.",
+                    required: true,
+                    type: 3
+                },
+                {
                     name: "item",
                     description: "Which item you would like to sell.",
                     required: true,

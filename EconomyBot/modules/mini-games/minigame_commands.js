@@ -193,7 +193,7 @@ module.exports.startCommands = function () {
             let profile = Array.isArray(profiles) ? profiles[0] : profiles;
 
             const embed = new Discord.MessageEmbed()
-                .setTitle("🧤 Gathering Mini-game")
+                .setTitle("🧺 Gathering Mini-game")
                 .setColor(defaultColor)
                 .setDescription("Roll the dice for good rewards!");
 

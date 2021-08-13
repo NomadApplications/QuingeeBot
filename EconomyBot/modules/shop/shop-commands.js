@@ -103,7 +103,11 @@ module.exports.startCommands = async function () {
 
 
         } else if (command === "sell"){
-            if(db.get(user.id) === null) initUser(user);
+            const profile = getProfileByString(args.profile, user);
+            if (profile === null) {
+                await replyError(interaction, "Please specify a valid profile name. If you would like to see your current profiles, type ``/profile list``.");
+                return;
+            }
             const item = getItemByName(args.item);
 
             if (item === null || item === undefined) {
@@ -114,14 +118,6 @@ module.exports.startCommands = async function () {
             if(item.sell <= 0){
                 await replyError(interaction, "You cannot sell this item.");
                 return;
-            }
-
-            const profiles = db.get(user.id + ".profiles");
-            let profile = null;
-            if(Array.isArray(profiles)){
-                profile = profiles[0];
-            } else {
-                profile = profiles;
             }
 
             const valid = profile.inventory.findIndex(x => x.name === item.name) !== -1;
