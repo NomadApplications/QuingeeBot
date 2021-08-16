@@ -13,6 +13,14 @@ global.moment = require("moment");
 
 global.moderationPrefix = config.moderationPrefix;
 
+// ROLES
+
+global.joinConfig = config.roles.join;
+global.reactionRoles = config.roles.reactionRoles;
+global.reactionRoleChannel = config.roles.reactionRoleChannel;
+
+global.reaction_role = require("../modules/reaction-roles/reaction-role-commands");
+
 // COLORS
 
 global.successColor = config.colors.successColor;

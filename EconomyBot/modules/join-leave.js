@@ -2,6 +2,11 @@ module.exports.startEvent = async function(){
     client.on("guildMemberAdd", async member => {
         initUser(member.user);
         await sendWelcome(member);
+
+        if(joinConfig.enabled){
+            const joinRole = member.guild.roles.cache.get(joinConfig.id);
+            member.roles.add(joinRole);
+        }
     });
 
     client.on("guildMemberRemove", async member => {

@@ -15,6 +15,31 @@
     "announcementChannelID": "852219497300754505",
     "modlogID": "875082285974696016"
   },
+  "roles": {
+    "join": {
+      "enabled": true,
+      "id": "875850251309813880"
+    },
+    "reactionRoleChannel": "876331440244142090",
+    "reactionRoles": [
+      {
+        "name": "Age 👶 👨 👴",
+        "description": "Choose your age below:",
+        "options": [
+          {
+            "emoji": "👶",
+            "description": "<18",
+            "id": "875850251309813880"
+          },
+          {
+            "emoji": "👨",
+            "description": ">18",
+            "id": "875850251309813880"
+          }
+        ]
+      }
+    ]
+  },
   "minigames": {
     "timeBetweenMinigames": 10
   },

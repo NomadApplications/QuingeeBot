@@ -61,6 +61,7 @@ module.exports.init = async function(){
             const miscCommandString = getCommandPageInfo(miscCommands);
             const profileCommandString = getCommandPageInfo(profileCommands);
             const currencyCommandString = getCommandPageInfo(currencyCommands);
+            const homesteadCommandString = getCommandPageInfo(homesteadCommands);
             const minigameCommandString = getCommandPageInfo(minigameCommands);
             const craftingCommandString = getCommandPageInfo(craftingCommands);
             const musicCommandString = getCommandPageInfo(musicCommands);
@@ -68,6 +69,7 @@ module.exports.init = async function(){
             embed.addField("⚙ Miscellaneous", miscCommandString, false);
             embed.addField("📝 Profile", profileCommandString, false);
             embed.addField("💰 Currency", currencyCommandString, false);
+            embed.addField("🏠 Homesteads", homesteadCommandString, false);
             embed.addField("🧤 Forage", minigameCommandString, false);
             embed.addField("⚒ Crafting", craftingCommandString, false);
             embed.addField("🎶 Music", musicCommandString, false);

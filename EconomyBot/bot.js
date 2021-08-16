@@ -40,6 +40,8 @@ client.on("ready", async () => {
 
     crafting_slash_commands.init();
     crafting_commands.startCommands();
+
+    reaction_role.startCommands();
 })
 
 client.on("message", message => {
