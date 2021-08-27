@@ -35,7 +35,7 @@ module.exports.startCommands = function(){
                 return null;
             }
 
-            if(profile.inventory.findIndex(x => x.name === args.item1) === -1 || profile.inventory.findIndex(x => x.name === args.item2)){
+            if(profile.inventory.findIndex(x => x.name === args.item1) === -1 || profile.inventory.findIndex(x => x.name === args.item2) === -1){
                 await replyError(interaction, "Please specify 2 items that you have in your inventory.");
                 return;
             }

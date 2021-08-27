@@ -146,23 +146,25 @@ module.exports.startCommands = function () {
             }
             let houseType = profile.houseType;
             let previous =  profile.houseType;
-            if (profile.houseType.name === houseTypes.oneRoomCabin.name) {
-                houseType = houseTypes.oneBedroomHouse;
-            } else if (profile.houseType.name === houseTypes.oneBedroomHouse.name) {
-                houseType = houseTypes.threeRoomTwoBath;
-            } else {
-                await replyError(interaction, "You already have the best house!");
+            const index = houses.findIndex(x => x.name === houseType.name);
+            if(index === -1){
+                await replyError(interaction, "There was an error upgrading, please contact an administrator.");
                 return;
             }
+            if(index=== houses.length - 1){
+                await replyError(interaction, "You already have the best house.");
+                return;
+            }
+            houseType = houses[index + 1];
 
             if(profile.currencyAmount < houseType.price){
-                await replyError(interaction, "You do not have enough Gald to upgrade your house! You need " + houseType.price + " and you currently have " + profile.currencyAmount);
+                await replyError(interaction, "You do not have enough " + currencyName + " to upgrade your house! You need " + houseType.price + " and you currently have " + profile.currencyAmount);
                 return;
             }
 
             const embed = new Discord.MessageEmbed()
                 .setTitle("🏠 House Upgrade!")
-                .setDescription(`*${profile.houseType.name}* -> **${houseType.name}** (**$${houseType.price}**). If you would like to confirm, react with ✅.`)
+                .setDescription(`*${profile.houseType.name}* -> **${houseType.name}** (**${moneyPrefix} ${houseType.price}**). If you would like to confirm, react with ✅.`)
                 .setColor(defaultColor);
 
             await reply(interaction, "Upgrade Below:");
@@ -235,6 +237,7 @@ module.exports.startCommands = function () {
 
             for(let i = 0; i < profile.nodeSlots.length; i++){
                 const n = profile.nodeSlots[i];
+                if(n === null) continue;
                 const nodeItem = getNodeItem(n.name);
                 if(nodeItem === null) continue;
 
@@ -252,6 +255,7 @@ module.exports.startCommands = function () {
 
             if(added.length === 0){
                 await replyError(interaction, "There was an error.");
+                setClaimedNodes(profile, false);
                 return;
             }
 

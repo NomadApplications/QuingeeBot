@@ -12,7 +12,7 @@ module.exports.init = function() {
                 },
                 {
                     name: "song",
-                    description: "How much you would like to buy.",
+                    description: "Which song you would like to play.",
                     required: false,
                     type: 3
                 },

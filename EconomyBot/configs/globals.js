@@ -1,4 +1,4 @@
-const config = require("./config.json");
+global.config = require("./config.json");
 const itemConfig = require("./items.json");
 
 // IMPORTS
@@ -54,6 +54,7 @@ global.itemsPerPage = config.economy.shopItemsPerPage;
 
 global.homestead_commands = require("../modules/homesteads/homestead-commands");
 global.homestead_slash_commands = require("../modules/homesteads/slashcommands");
+global.houses = config.homesteads.houses;
 
 // MINIGAMES
 
@@ -73,6 +74,7 @@ global.season_slash_commands = require("../modules/seasons/slashcommands");
 // ECONOMY
 
 global.currencyName = config.economy.name;
+global.moneyPrefix = config.economy.money_prefix;
 global.maximumProfiles = config.economy.maximumProfiles;
 global.startingCurrency = config.economy.startingCurrency;
 global.startingProfileName = config.economy.startingProfileName;

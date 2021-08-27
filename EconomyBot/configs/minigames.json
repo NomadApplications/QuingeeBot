@@ -1,0 +1,147 @@
+{
+  "level1": "Better luck next time..",
+  "level2": "That's pretty rare!",
+  "level3": "Wow! Nice find!",
+  "mining": {
+    "level1": {
+      "items": [
+        {
+          "name": "stone",
+          "emoji": "\uD83E\uDEA8",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level2": {
+      "items": [
+        {
+          "name": "bronze",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "iron",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level3": {
+      "items": [
+        {
+          "name": "jewel",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "goddess tear",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    }
+  },
+  "fishing": {
+    "level1": {
+      "items": [
+        {
+          "name": "clay",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "trash",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "worms",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level2": {
+      "items": [
+        {
+          "name": "small fish",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "fish",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "water lily",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level3": {
+      "items": [
+        {
+          "name": "special fish",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "big fish",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    }
+  },
+  "gathering": {
+    "level1": {
+      "items": [
+        {
+          "name": "flowers",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "mushrooms",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "soil",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level2": {
+      "items": [
+        {
+          "name": "wood",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "bamboo",
+          "emoji": "",
+          "reward-text": ""
+        },
+        {
+          "name": "wild fruit",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    },
+    "level3": {
+      "items": [
+        {
+          "name": "rare wood",
+          "emoji": "",
+          "reward-text": ""
+        }
+      ]
+    }
+  }
+}

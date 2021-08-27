@@ -27,20 +27,45 @@ module.exports.startCommands = async function () {
                     await replyError(interaction, "You already have " + maximumProfiles + " profiles.");
                     return;
                 }
+
+                const currentAmount = db.get(user.id + ".profiles").length;
+                if(config.economy.profileCosts[currentAmount] === null || config.economy.profileCosts[currentAmount] === undefined){
+                    await replyError(interaction, "There has been an error.");
+                    return;
+                }
+                const p = getProfileByString("Main", user);
+                if(p === null){
+                    await replyError(interaction, "There has been an error.");
+                    return;
+                }
+                if(config.economy.profileCosts[currentAmount] > p.currencyAmount) {
+                    await replyError(interaction, `You only have ${moneyPrefix} ${p.currencyAmount}. You need ${moneyPrefix} ${config.economy.profileCosts[currentAmount]}!`);
+                    return;
+                }
                 let profileName = "Profile" + db.get(user.id + ".profiles").length;
                 if (!Array.isArray(db.get(user.id + ".profiles"))) {
                     profileName = "Profile1";
                 }
+                if(getProfileByString(profileName, user) !== null){
+                    await replyError(interaction, "You already have a profile named " + profileName + " please specify a profile name you aren't currently using.");
+                    return;
+                }
                 if (!args.name) {
-                    const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houseTypes.oneRoomCabin);
+                    const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houses[0]);
                     addNewProfile(user, profile);
-                    await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
+                    removeCurrency(p, config.economy.profileCosts[currentAmount]);
+                    await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + " for " + moneyPrefix + " " + config.economy.profileCosts[currentAmount]+ "!");
                     return;
                 }
                 profileName = args.name;
-                const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houseTypes.oneRoomCabin);
+                if(getProfileByString(profileName, user) !== null){
+                    await replyError(interaction, "You already have a profile named " + profileName + " please specify a profile name you aren't currently using.");
+                    return;
+                }
+                const profile = new EcoProfile(startingCurrency, [], profileName, user.id, guildID, houses[0]);
                 addNewProfile(user, profile);
-                await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + "!");
+                removeCurrency(p, config.economy.profileCosts[currentAmount]);
+                await replySuccess(interaction, "Successfully created a new profile under the name " + profileName + " for " + moneyPrefix + " " + config.economy.profileCosts[currentAmount]+ "!");
             } else if (args.type === "list") {
                 const profiles = db.get(user.id + ".profiles");
 
@@ -56,7 +81,7 @@ module.exports.startCommands = async function () {
                 }
                 for (let i = 0; i < profiles.length; i++) {
                     const profile = profiles[i];
-                    embed.addField(profile.title, `$${profile.currencyAmount}\n${profile.inventory.length} items`, false);
+                    embed.addField(profile.title, `${moneyPrefix} ${profile.currencyAmount}\n${profile.inventory.length} items`, false);
                 }
 
                 await reply(interaction, embed);
@@ -117,17 +142,14 @@ module.exports.startCommands = async function () {
                 for(let i = 0; i < profiles.length; i++){
                     let m = 0;
                     profiles[i].nodeSlots.forEach(node => { if(node !== null) m++; })
-                    if(m === 0) continue;
                     addCurrency(profiles[i], dailyReward * m);
-                    addedTo.push([profiles[i], m]);
+                    addedTo.push([profiles[i], m + 1]);
                 }
             } else {
                 let m = 0;
                 profiles.nodeSlots.forEach(node => { if(node !== null) m++; })
-                if(m !== 0){
-                    profiles.addCurrency(profiles, dailyReward * m);
-                    addedTo.push([profiles, m]);
-                }
+                profiles.addCurrency(profiles, dailyReward * m);
+                addedTo.push([profiles, m + 1]);
             }
 
             if(addedTo.length === 0){
@@ -144,7 +166,7 @@ module.exports.startCommands = async function () {
             addedTo.forEach(a => {
                 const p = a[0];
                 const m = a[1];
-                embed.addField(p.title, `x${m} ($${dailyReward * m})`, false);
+                embed.addField(p.title, `x${m} (${moneyPrefix} ${dailyReward * m})`, false);
             })
 
             await reply(interaction, embed);
@@ -158,6 +180,10 @@ module.exports.startCommands = async function () {
             }
             if(profile.title === "Main"){
                 await replyError(interaction, "You cannot change the name of your Main profile.");
+                return;
+            }
+            if(getProfileByString(args.name, user) !== null){
+                await replyError(interaction, "You cannot change a profile name to an already existing profile name.");
                 return;
             }
 
@@ -281,7 +307,7 @@ function getPage(pageNumber, profile) {
     const maximumPages = pages.length;
 
     const embed = new Discord.MessageEmbed()
-        .setTitle("💼 Inventory")
+        .setTitle(`💼 Inventory || ${moneyPrefix} ${profile.currencyAmount}`)
         .setColor(currencyColor)
         .setDescription("Inventory of *" + profile.title + "*. **Items**:");
 

@@ -1,10 +1,11 @@
 const pages = [];
+const furniture_pages = [];
 
-const fishingPage = [];
-const miningPage = [];
-const gatheringPage = [];
+module.exports.init = async function () {
+    initPages();
+}
 
-module.exports.initPages = async function () {
+global.initPages = () => {
     let currentPage = 0;
 
     pages.push([0, []]);
@@ -15,6 +16,7 @@ module.exports.initPages = async function () {
 
     for (let i = 0; i < items.length; i++) {
         const item = getAllItems()[items[i]];
+        if(item.category === "furniture") continue;
         if (addedItems % itemsPerPage === 0) {
             if (item.buy === 1 && i !== 0) {
                 currentPage++;
@@ -24,6 +26,26 @@ module.exports.initPages = async function () {
         if (item.buy !== -1) {
             addedItems++;
             pages[currentPage][1].push(item);
+        }
+    }
+
+    let _currentPage = 0;
+    furniture_pages.push([_currentPage, []]);
+    const _items = Object.keys(furniture);
+
+    let _addedItems = 0;
+
+    for(let i = 0; i < _items.length; i++){
+        const item = furniture[_items[i]];
+        if(_addedItems % itemsPerPage === 0){
+            if(item.buy === 1 && i !== 0){
+                _currentPage++;
+                furniture_pages.push([_currentPage, []]);
+            }
+        }
+        if(item.buy !== -1){
+            _addedItems += 30;
+            furniture_pages[_currentPage][1].push(item);
         }
     }
 }
@@ -50,6 +72,8 @@ module.exports.startCommands = async function () {
 
         if (command === "shop") {
             await handleShop(interaction, channel, user, args)
+        } else if (command === "furnitureshop"){
+            await handleFurnitureShop(interaction, channel, user, args);
         } else if (command === "buy") {
             if(db.get(user.id) === null) initUser(user);
             const item = getItemByName(args.item);
@@ -78,7 +102,7 @@ module.exports.startCommands = async function () {
                     return;
                 }
                 amount = parseInt(args.quantity);
-            }
+            } else { amount = 1; }
 
             if(amount <= 0){
                 await replyError(interaction, "Please specify a number above 0.");
@@ -131,26 +155,29 @@ module.exports.startCommands = async function () {
 
             let f = 0;
 
-            if(isNaN(args.amount)){
-                if(args.amount === "max"){
-                    f = amount;
+            if(args.amount){
+                if(isNaN(args.amount)){
+                    if(args.amount === "max"){
+                        f = amount;
+                    } else {
+                        await replyError(interaction, "Please specify a valid amount ``[number, max]``.");
+                        return;
+                    }
                 } else {
-                    await replyError(interaction, "Please specify a valid amount ``[number, max]``.");
-                    return;
+                    let c = parseInt(args.amount);
+                    if(c > amount || c <= 0){
+                        await replyError(interaction, "Please specify a valid amount (check ``/inventory [profile]``");
+                        return;
+                    }
+                    f = c;
                 }
-            } else {
-                let c = parseInt(args.amount);
-                if(c > amount || c <= 0){
+
+                if(f <= 0){
                     await replyError(interaction, "Please specify a valid amount (check ``/inventory [profile]``");
                     return;
                 }
-                f = c;
-            }
+            } else { f = 1 }
 
-            if(f <= 0){
-                await replyError(interaction, "Please specify a valid amount (check ``/inventory [profile]``");
-                return;
-            }
 
             if (valid) {
                 for(let i = 0; i < f; i++){
@@ -215,6 +242,80 @@ module.exports.startCommands = async function () {
             }
         }
     });
+}
+
+function getFurniturePage(pageNumber){
+    const embed = new Discord.MessageEmbed()
+        .setTitle("🛋 Quingee Furniture Shop")
+        .setColor(currencyColor)
+        .setDescription("To buy items, type ``/buy [item] [amount]``.")
+        .setFooter("Page " + (parseInt(pageNumber) + 1) + " / " + furniture_pages.length);
+
+    for (let i = 0; i < furniture_pages[pageNumber][1].length; i++) {
+        const item = furniture_pages[pageNumber][1][i];
+
+        const emoji = getEmojiByCategory(item);
+        embed.addField(capitalize(item.name) + `\n *${emoji + capitalize(item.category)}*`, `*Price*: ${item.buy}`, true);
+    }
+
+    return embed;
+}
+
+async function handleFurnitureShop(interaction, channel, user, args){
+    const pageNumber = 0;
+
+    const embed = getFurniturePage(pageNumber);
+
+    await reply(interaction, "Shop below:");
+
+    if(furniture_pages.length === 1){
+        channel.send(embed);
+        return;
+    }
+
+    sendFurnitureEmbedWithReactions(embed, channel, pageNumber, user);
+}
+
+function sendFurnitureEmbedWithReactions(embed, channel, pageNumber, user){
+    channel.send(embed).then(embedMessage => {
+        editFurnitureEmbed(embedMessage, embed, pageNumber, user);
+    })
+}
+
+function editFurnitureEmbed(message, embed, pageNumber, user){
+    message.edit(embed).then(async embedMessage => {
+        await embedMessage.react('◀');
+        await embedMessage.react('▶');
+
+        let embed = null;
+        let p = 0;
+
+        embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '◀' || reaction.emoji.name == '▶'), {
+            max: 1,
+            time: 30000
+        }).then(collected => {
+
+            embedMessage.reactions.removeAll();
+
+            if (collected.first().emoji.name == '◀') {
+                if (pageNumber === 0) p = furniture_pages.length - 1;
+                else p = pageNumber - 1;
+
+                embed = getPage(p);
+
+                editFurnitureEmbed(embedMessage, embed, p, user);
+            } else if (collected.first().emoji.name == "▶") {
+                if (pageNumber === furniture_pages.length - 1) p = 0;
+                else p = pageNumber + 1;
+
+                embed = getPage(p);
+
+                editFurnitureEmbed(embedMessage, embed, p, user);
+            }
+        }).catch(() => {
+            return;
+        });
+    })
 }
 
 async function handleShop(interaction, channel, user, args) {

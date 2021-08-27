@@ -1,12 +1,19 @@
-module.exports.init = async function() {
-    await getApp(guildID).commands.post({
+module.exports.init = function() {
+    getApp(guildID).commands.post({
         data: {
             name: "shop",
             description: "See the item shop.",
         }
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
+        data: {
+            name: "furnitureshop",
+            description: "See the furniture item shop."
+        }
+    })
+
+    getApp(guildID).commands.post({
         data: {
             name: "sell",
             description: "Sell any items in your inventory.",
@@ -33,14 +40,14 @@ module.exports.init = async function() {
         }
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
         data: {
             name: "inventory",
             description: "See all of your items.",
         }
     })
 
-    await getApp(guildID).commands.post({
+    getApp(guildID).commands.post({
         data: {
             name: "buy",
             description: "See your (or someone else's) current balance.",

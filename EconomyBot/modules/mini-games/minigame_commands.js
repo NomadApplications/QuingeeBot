@@ -67,29 +67,54 @@ module.exports.startCommands = function () {
                 }
             }, timeBetweenMinigames * 1000);
 
+
+
             await reply(interaction, "Mini-game below:");
             channel.send(embed).then(embedMessage => {
                 embedMessage.react("⛰");
                 embedMessage.react("🏔️");
                 embedMessage.react("🗻");
 
-                embedMessage.awaitReactions((reaction, u) => u.id == user.id && (reaction.emoji.name == '⛰' || reaction.emoji.name == '🏔️' || reaction.emoji.name == '🗻'), {
+                embedMessage.awaitReactions((reaction, u) => u.id === user.id && (reaction.emoji.name === '⛰' || reaction.emoji.name === '🏔️' || reaction.emoji.name === '🗻'), {
                     max: 1,
                     time: 30000
                 }).then(collected => {
 
-                    embedMessage.reactions.removeAll();
+                    const reaction = collected.first();
+                    if(reaction.emoji.name === "⛰" || reaction.emoji.name === '🏔️' || reaction.emoji.name === '🗻'){
+                        embedMessage.reactions.removeAll();
 
-                    const randomItem = mining[getRandom(Object.keys(mining))];
+                        const level = getRandomByProbability(1, 3);
+                        const item = getItemFromLevel(level, "mining");
 
-                    const e = new Discord.MessageEmbed()
-                        .setTitle("Reward! 🌟")
-                        .setColor(successColor)
-                        .setDescription(`You won ${capitalize(randomItem.name)}! Congratulations, it has been added to ${profile.title}!`);
+                        if(getItemByName(item.name) === null) {
+                            const error = new Discord.MessageEmbed()
+                                .setDescription("There has been an error finding an item.")
+                                .setColor(errorColor);
 
-                    giveItem(profile, randomItem, 1);
+                            channel.send(error);
+                            return;
+                        }
 
-                    channel.send(e);
+                        const levelRewardText = (level) => {
+                            if(level === 1) return minigamesConfig.level1;
+                            else if (level === 2) return minigamesConfig.level2;
+                            else if (level === 3) return minigamesConfig.level3;
+                            return "";
+                        }
+
+                        const m = item["reward-text"] === "" ? levelRewardText(level) : item["reward-text"];
+                        const em = item.emoji === "" ? "❌" : item.emoji;
+
+                        const e = new Discord.MessageEmbed()
+                            .setTitle("Reward! 🌟")
+                            .setColor(successColor)
+                            .setDescription(`You found **${capitalize(item.name)} ${em}**! *${m}* **It has been added to ${profile.title}**!`);
+
+                        channel.send(e);
+
+                        giveItem(profile, getItemByName(item.name), 1);
+                    }
                 }).catch(() => {
                     return;
                 });
@@ -159,16 +184,36 @@ module.exports.startCommands = function () {
                             clearTimeout(timer);
                             embedMessage.reactions.removeAll();
 
-                            const randomItem = fishing[getRandom(Object.keys(fishing))];
+                            const level = getRandomByProbability(1, 3);
+                            const item = getItemFromLevel(level, "fishing");
+
+                            if(getItemByName(item.name) === null) {
+                                const error = new Discord.MessageEmbed()
+                                    .setDescription("There has been an error finding an item.")
+                                    .setColor(errorColor);
+
+                                channel.send(error);
+                                return;
+                            }
+
+                            const levelRewardText = (level) => {
+                                if(level === 1) return minigamesConfig.level1;
+                                else if (level === 2) return minigamesConfig.level2;
+                                else if (level === 3) return minigamesConfig.level3;
+                                return "";
+                            }
+
+                            const m = item["reward-text"] === "" ? levelRewardText(level) : item["reward-text"];
+                            const em = item.emoji === "" ? "❌" : item.emoji;
 
                             const e = new Discord.MessageEmbed()
                                 .setTitle("Reward! 🌟")
                                 .setColor(successColor)
-                                .setDescription(`You won ${capitalize(randomItem.name)}! Congratulations, it has been added to ${profile.title}!`);
+                                .setDescription(`You found **${capitalize(item.name)} ${em}**! *${m}* **It has been added to ${profile.title}**!`);
 
                             channel.send(e);
 
-                            giveItem(profile, randomItem, 1);
+                            giveItem(profile, getItemByName(item.name), 1);
                         }).catch(()=>{
                             return;
                         });
@@ -228,16 +273,36 @@ module.exports.startCommands = function () {
                     embedMessage.reactions.removeAll();
                     let side = getRandomIntInclusive(1, 6);
 
-                    const randomItem = gathering[getRandom(Object.keys(gathering))];
+                    const level = getRandomByProbability(1, 3);
+                    const item = getItemFromLevel(level, "gathering");
+
+                    if(getItemByName(item.name) === null) {
+                        const error = new Discord.MessageEmbed()
+                            .setDescription("There has been an error finding an item.")
+                            .setColor(errorColor);
+
+                        channel.send(error);
+                        return;
+                    }
+
+                    const levelRewardText = (level) => {
+                        if(level === 1) return minigamesConfig.level1;
+                        else if (level === 2) return minigamesConfig.level2;
+                        else if (level === 3) return minigamesConfig.level3;
+                        return "";
+                    }
+
+                    const m = item["reward-text"] === "" ? levelRewardText(level) : item["reward-text"];
+                    const em = item.emoji === "" ? "❌" : item.emoji;
 
                     const e = new Discord.MessageEmbed()
-                        .setTitle("You rolled a " + side + "!")
+                        .setTitle("You rolled a " + side + "! 🌟")
                         .setColor(successColor)
-                        .setDescription(`You won ${capitalize(randomItem.name)}! Congratulations, it has been added to ${profile.title}!`);
-
-                    giveItem(profile, randomItem, 1);
+                        .setDescription(`You found **${capitalize(item.name)} ${em}**! *${m}* **It has been added to ${profile.title}**!`);
 
                     channel.send(e);
+
+                    giveItem(profile, getItemByName(item.name), 1);
                 }).catch(()=>{
                     return;
                 })
@@ -257,7 +322,51 @@ global.getRandomIntInclusive = (min, max) => {
 }
 
 function getRandomByRange(min, max){
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
+    return Math.random() * (max - min) + min;
+}
+
+function getRandomByProbability(min, max){
+    const arr = [];
+    for(let i = max; i >= min; i--) arr.push(i);
+    return triangularWeightedRandomSelect(arr);
+}
+
+function triangularWeightedRandomSelect(arr){
+    let ii = Math.floor(Math.random() * (arr.length + 1) * arr.length / 2);
+    let ie = 0;
+    while((ie + 2) * ((ie + 1) / 2) < ii){
+        ie++;
+    }
+    return arr[arr.length - 1 - ie];
+}
+
+const minigamesConfig = require("../../configs/minigames.json");
+
+function getItemFromLevel(level, category){
+    if(level === 1){
+        if(category === "mining"){
+            return getRandom(minigamesConfig.mining.level1.items);
+        } else if (category === "fishing"){
+            return getRandom(minigamesConfig.fishing.level1.items);
+        } else if (category === "gathering"){
+            return getRandom(minigamesConfig.gathering.level1.items);
+        }
+    } else if(level === 2){
+        if(category === "mining"){
+            return getRandom(minigamesConfig.mining.level2.items);
+        } else if (category === "fishing"){
+            return getRandom(minigamesConfig.fishing.level2.items);
+        } else if (category === "gathering"){
+            return getRandom(minigamesConfig.gathering.level2.items);
+        }
+    } else if (level === 3){
+        if(category === "mining"){
+            return getRandom(minigamesConfig.mining.level3.items);
+        } else if (category === "fishing"){
+            return getRandom(minigamesConfig.fishing.level3.items);
+        } else if (category === "gathering"){
+            return getRandom(minigamesConfig.gathering.level3.items);
+        }
+    }
+    return null;
 }

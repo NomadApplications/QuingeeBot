@@ -169,6 +169,27 @@
       "category": "gathering"
     },
     {
+      "name": "wooden table",
+      "buy": 0,
+      "sell": -1,
+      "season": -1,
+      "category": "furniture"
+    },
+    {
+      "name": "wooden chair",
+      "buy": 5,
+      "sell": -1,
+      "season": -1,
+      "category": "furniture"
+    },
+    {
+      "name": "wooden bench",
+      "buy": 53,
+      "sell": -1,
+      "season": -1,
+      "category": "furniture"
+    },
+    {
       "name": "ice",
       "buy": -1,
       "sell": 3,
@@ -188,20 +209,6 @@
       "sell": 10,
       "season": -1,
       "category": "node"
-    },
-    {
-      "name": "wooden table",
-      "buy": 0,
-      "sell": -1,
-      "season": -1,
-      "category": "furniture"
-    },
-    {
-      "name": "wooden chair",
-      "buy": 0,
-      "sell": -1,
-      "season": -1,
-      "category": "furniture"
     }
   ]
 }

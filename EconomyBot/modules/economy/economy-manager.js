@@ -13,7 +13,7 @@ module.exports.init = async function(){
 
 global.initUser = function(user){
     if(db.get(user.id) !== null) return;
-    const startingProfile = new EcoProfile(startingCurrency, [], "Main", user.id, guildID, houseTypes.oneRoomCabin);
+    const startingProfile = new EcoProfile(startingCurrency, [], "Main", user.id, guildID, houses[0]);
     db.set(user.id, { profiles: [startingProfile], daily: true });
 }
 
@@ -80,14 +80,8 @@ global.getItemByCategory = function(profile, category){
     return items;
 }
 
-global.houseTypes = {
-    oneRoomCabin: {name: "One Room Cabin", nodeAmount: 1, price: 0  },
-    oneBedroomHouse: {name: "One Bedroom House", nodeAmount: 2,  price: 500},
-    threeRoomTwoBath: {name: "3 Room 2 Bath", nodeAmount: 3,  price: 1000},
-}
-
 global.EcoProfile = class {
-    constructor(currencyAmount = startingCurrency, inventory = [], title = "Main", id, guildId, houseType = houseTypes.oneRoomCabin){
+    constructor(currencyAmount = startingCurrency, inventory = [], title = "Main", id, guildId, houseType = houses[0]){
         this.currencyAmount = currencyAmount;
         this.inventory = inventory;
         this.title = title;

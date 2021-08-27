@@ -1,4 +1,4 @@
-const items = {};
+const _items = {};
 
 global.fishing = {};
 global.mining = {};
@@ -7,25 +7,27 @@ global.crafted_items = {};
 global.daily = {};
 global.furniture = {};
 
-module.exports.initItems = function(itemList){
-    for(let i = 0; i < itemList.length; i++){
-        const category = itemList[i].category;
+module.exports.initItems = function(items){
+    fishing["name"] = "fishing";
+    mining["name"] = "mining";
+    gathering["name"] = "gathering";
+    crafted_items["name"] = "crafted_items";
+    daily["name"] = "daily";
 
-        fishing["name"] = "fishing";
-        mining["name"] = "mining";
-        gathering["name"] = "gathering";
-        crafted_items["name"] = "crafted_items";
-        daily["name"] = "daily";
-        furniture["name"] = "furniture";
+    for(let i = 0; i < items.length; i++){
+        const category = items[i].category;
 
-        if(category === "fishing") addItemToObject(fishing, itemList[i]);
-        else if (category === "mining") addItemToObject(mining, itemList[i]);
-        else if (category === "gathering") addItemToObject(gathering, itemList[i]);
-        else if (category === "crafted items") addItemToObject(crafted_items, itemList[i]);
-        else if (category === "daily") addItemToObject(daily, itemList[i]);
-        else if (category === "furniture") addItemToObject(furniture, itemList[i]);
+        if(category === "fishing") addItemToObject(fishing, items[i]);
+        else if (category === "mining") addItemToObject(mining, items[i]);
+        else if (category === "gathering") addItemToObject(gathering, items[i]);
+        else if (category === "crafted items") addItemToObject(crafted_items, items[i]);
+        else if (category === "daily") addItemToObject(daily, items[i]);
+        else if (category === "furniture"){
+            addItemToObject(furniture, items[i]);
+            continue;
+        }
 
-        addItemToObject(items, itemList[i]);
+        addItemToObject(_items, items[i]);
     }
 }
 
@@ -44,9 +46,16 @@ global.Item = class {
 }
 
 global.getItemByName = (name) => {
-    const item = items[name];
+    const item = _items[name];
     if(item === undefined || item === null) return null;
     return item;
+}
+
+global.itemInCurrentSeason = (item) => {
+    if(item.currentSeason === -1) return true;
+    const currentSeason = db.get("seasons.currentSeason");
+    if(item.season === currentSeason.index) return true;
+    else return false;
 }
 
 global.giveItemByName = (user, name) => {
@@ -78,10 +87,10 @@ global.removeItem = (profile, item) => {
 }
 
 global.getAllItems = () => {
-    return items;
+    return _items;
 }
 
-global.getItemByIndex = (i) => items[Object.keys(items)[i]];
+global.getItemByIndex = (i) => _items[Object.keys(_items)[i]];
 
 global.getEmojiByCategory = (item) => {
     const category = item.category;

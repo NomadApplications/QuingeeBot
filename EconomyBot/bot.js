@@ -7,11 +7,11 @@ client.on("ready", async () => {
 
     initCommands();
 
-    itemReader.initItems(items);
+    itemReader.initItems(require("./configs/items.json").items);
 
     shop_slash_commands.init();
     shop_commands.startCommands();
-    shop_commands.initPages();
+    shop_commands.init();
 
     main_slash_commands.init();
 
@@ -30,8 +30,6 @@ client.on("ready", async () => {
 
     music_slash_commands.init();
     music_commands.startCommands();
-
-    itemReader.initItems(items);
 
     minigame_commands.startCommands();
     minigame_slash_commands.init();
@@ -77,6 +75,12 @@ client.on("message", message => {
         newProfile.currencyAmount -= parseInt(args[1]);
         updateProfile(newProfile);
         message.channel.send("Successfully removed " + args[1] + " from " + message.author.username);
+    } else if (args[0] === "!newday") {
+        newDay();
+        return;
+    } else if(args[0] === "!winter2"){
+        db.set("seasons.currentSeason", seasons.winter2);
+        return;
     }
 })
 

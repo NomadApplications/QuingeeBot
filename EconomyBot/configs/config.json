@@ -44,28 +44,34 @@
     "timeBetweenMinigames": 10
   },
   "calendar": {
-    "monthLength": 24,
-    "seasonLength": 48,
+    "monthLength": 2,
+    "seasonLength": 5,
     "seasonEvents": [
       {
         "eventTitle": "Harvest Festival",
-        "eventSeason": "spring1",
+        "eventSeason": "spring",
         "eventDay": 1,
         "announcementMessage": "It's the Harvest Festival y'all!"
       },
       {
         "eventTitle": "Winter Reading",
-        "eventSeason": "winter2",
+        "eventSeason": "winter",
         "eventDay": 1,
-        "announcementMessage:": "We made it to Winter 2! Get ready for some reading!"
+        "announcementMessage": "We made it to Winter 2! Get ready for some reading!"
       }
     ]
   },
   "economy": {
     "maximumProfiles": 3,
+    "profileCosts": [
+      200,
+      300,
+      500
+    ],
     "startingCurrency": 10,
     "startingProfileName": "Main",
     "name": "Gald",
+    "money_prefix": "Ⓖ",
     "daily": {
       "min": 50,
       "max": 150
@@ -73,10 +79,27 @@
     "shopItemsPerPage": 10
   },
   "homesteads": {
-    "maximumHouses": 10,
-    "daily": {
-      "min": 50,
-      "max": 150
-    }
+    "houses": [
+      {
+        "name": "One Room Cabin",
+        "nodeAmount": 1,
+        "price": 0
+      },
+      {
+        "name": "One Bedroom House",
+        "nodeAmount": 2,
+        "price": 500
+      },
+      {
+        "name": "3 Room 2 Bath",
+        "nodeAmount": 3,
+        "price": 1000
+      },
+      {
+        "name": "15 Room 10 Bath",
+        "nodeAmount": 5,
+        "price": 10000
+      }
+    ]
   }
 }

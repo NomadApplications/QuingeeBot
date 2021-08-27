@@ -23,7 +23,7 @@ module.exports.startCommands = async function(){
             }
             let currentDay = db.get("seasons.currentDay");
             let currentSeason = db.get("seasons.currentSeason");
-            await reply(interaction, `It is currently day ${currentDay}/${seasonLength} of ${currentSeason}!`);
+            await reply(interaction, `It is currently day ${currentDay}/${seasonLength} of ${currentSeason.title}!`);
         }
     })
 }
