@@ -29,6 +29,10 @@ global.errorColor = config.colors.errorColor;
 global.currencyColor = config.colors.currencyColor;
 global.musicColor = config.colors.musicColor;
 
+// LOOKUP
+
+global.lookup_commands = require("../modules/lookups/lookup_commands");
+
 // CRAFTING
 
 global.crafting_commands = require("../modules/crafting/crafting-commands");

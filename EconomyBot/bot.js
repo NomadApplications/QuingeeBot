@@ -40,6 +40,9 @@ client.on("ready", async () => {
     crafting_commands.startCommands();
 
     reaction_role.startCommands();
+
+    lookup_commands.startCommands();
+    lookup_commands.initCommands();
 })
 
 client.on("message", message => {

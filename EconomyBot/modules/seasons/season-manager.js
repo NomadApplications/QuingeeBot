@@ -73,10 +73,9 @@ global.newDay = function(){
     })
 
     db.add("seasons.currentDay", 1);
+    let announcementChannel = client.guilds.cache.get(guildID).channels.cache.get(announcementChannelID);
 
     if(db.get("seasons.currentDay") >= seasonLength){
-        let announcementChannel = client.guilds.cache.get(guildID).channels.cache.get(announcementChannelID);
-
         db.set("seasons.currentDay", 1);
 
         switch(db.get("seasons.currentSeason").title){
@@ -136,12 +135,35 @@ global.newDay = function(){
             }
         }
     }
+    let am = config.calendar.dailyAnnouncement.message;
+    am = am.replace("{season}", db.get("seasons.currentSeason").title);
+    am = am.replace("{weather}", getRandomWeather());
+    am = am.replace("{day}", db.get("seasons.currentDay"));
+    am = am.replace("{totalDays}", config.calendar.seasonLength);
+    announcementChannel.send(am);
 }
 
-function getIndexBySeasonTitle(title){
+global.getIndexBySeasonTitle = (title) => {
     if(title === "spring") return 1;
     else if (title === "summer") return 2;
     else if (title === "fall") return 3;
     else if (title === "winter") return 4;
     return -1;
+}
+
+const getRandomWeather = () => {
+    const season = db.get("seasons.currentSeason").index;
+    if(season === 1){
+        return getRandomFromArr(["Rainy 🌧", "Storming ⛈", "Sunny ☀", "Cloudy ☁"]);
+    } else if (season === 2){
+        return getRandomFromArr(["Rainy 🌧", "Sunny ☀", "Clear ⛱", "Cloudy ☁"]);
+    } else if (season === 3){
+        return getRandomFromArr(["Rainy 🌧", "Clear ⛱", "Cloudy ☁"]);
+    } else if (season === 4){
+        return getRandomFromArr(["Rainy 🌧", "Snowing 🌨", "Cloudy ☁"]);
+    }
+}
+
+getRandomFromArr = (arr) => {
+    return arr[Math.floor(Math.random() * arr.length)];
 }

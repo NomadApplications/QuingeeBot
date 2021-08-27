@@ -44,7 +44,9 @@
     "timeBetweenMinigames": 10
   },
   "calendar": {
-    "monthLength": 2,
+    "dailyAnnouncement": {
+      "message": "It's currently **{season}** day **{day}/{totalDays}**! And today the weather is **{weather}**!"
+    },
     "seasonLength": 5,
     "seasonEvents": [
       {

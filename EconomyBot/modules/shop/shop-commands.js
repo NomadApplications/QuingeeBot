@@ -17,6 +17,9 @@ global.initPages = () => {
     for (let i = 0; i < items.length; i++) {
         const item = getAllItems()[items[i]];
         if(item.category === "furniture") continue;
+        if(item.season !== -1){
+            if(item.season !== item.season) continue;
+        }
         if (addedItems % itemsPerPage === 0) {
             if (item.buy === 1 && i !== 0) {
                 currentPage++;
@@ -255,7 +258,7 @@ function getFurniturePage(pageNumber){
         const item = furniture_pages[pageNumber][1][i];
 
         const emoji = getEmojiByCategory(item);
-        embed.addField(capitalize(item.name) + `\n *${emoji + capitalize(item.category)}*`, `*Price*: ${item.buy}`, true);
+        embed.addField(`${capitalize(item.name)} ${emoji}`, `*Price*: ${item.buy}`, true);
     }
 
     return embed;
@@ -344,7 +347,7 @@ function getPage(pageNumber) {
         const item = pages[pageNumber][1][i];
 
         const emoji = getEmojiByCategory(item);
-        embed.addField(capitalize(item.name) + `\n *${emoji + capitalize(item.category)}*`, `*Price*: ${item.buy}`, true);
+        embed.addField(`${capitalize(item.name)} ${emoji}`, `*Price*: ${item.buy}`, true);
     }
 
     return embed;

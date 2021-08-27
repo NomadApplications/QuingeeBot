@@ -24,7 +24,6 @@ module.exports.initItems = function(items){
         else if (category === "daily") addItemToObject(daily, items[i]);
         else if (category === "furniture"){
             addItemToObject(furniture, items[i]);
-            continue;
         }
 
         addItemToObject(_items, items[i]);

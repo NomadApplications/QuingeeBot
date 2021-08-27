@@ -2,8 +2,14 @@
   "recipes": [
     {
       "items": [
-        "stone",
-        "iron"
+        {
+          "name": "stone",
+          "amount": 2
+        },
+        {
+          "name": "iron",
+          "amount": 1
+        }
       ],
       "result": "forge"
     }

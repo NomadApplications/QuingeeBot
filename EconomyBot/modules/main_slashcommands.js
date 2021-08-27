@@ -92,7 +92,7 @@ module.exports.init = async function(){
                 moderationCommands.push(new CommandInfo("unlock", "Unlocks a channel.", []));
                 moderationCommands.push(new CommandInfo("purge", "Mass delete messages.", [new CommandParam("amount", true)]));
 
-                const moderationCommandString = getCommandPageInfo(moderationCommands);
+                const moderationCommandString = getModCommandInfo(moderationCommands);
 
                 mod.addField("Commands", moderationCommandString, false);
 
@@ -117,8 +117,24 @@ function getCommandPageInfo(arr){
         }
         cs += `> __/${command.name}__ ${paramString} **- ${command.description}**\n`;
     });
+    return cs;
+}
 
-
+function getModCommandInfo(arr){
+    let cs = "";
+    arr.forEach(command => {
+        let paramString = "";
+        if(command.params.length > 0){
+            command.params.forEach(param => {
+                if(param.required === true){
+                    paramString += `<${param.name}> `;
+                } else {
+                    paramString += `[${param.name}] `;
+                }
+            })
+        }
+        cs += `> __${moderationPrefix}${command.name}__ ${paramString} **- ${command.description}**\n`;
+    });
     return cs;
 }
 

@@ -311,7 +311,7 @@ module.exports.startCommands = function () {
     });
 }
 
-function getRandom(arr){
+function getRandom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 

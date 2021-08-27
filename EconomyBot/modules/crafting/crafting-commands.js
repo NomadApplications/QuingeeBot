@@ -28,38 +28,23 @@ module.exports.startCommands = function(){
                 return;
             }
 
-            const i1 = getItemByName(args.item1);
-            const i2 = getItemByName(args.item2);
-            if(i1 === null || i2 === null){
-                await replyError(interaction, "Please specify a valid item name. ``/inventory [profile]`` to see all of your items.");
-                return null;
-            }
+            const newItem = combineItems(args.recipe, profile);
 
-            if(profile.inventory.findIndex(x => x.name === args.item1) === -1 || profile.inventory.findIndex(x => x.name === args.item2) === -1){
-                await replyError(interaction, "Please specify 2 items that you have in your inventory.");
+            if(newItem.error !== undefined){
+                await replyError(interaction, newItem.error);
                 return;
             }
 
-            const newItem = combineItems(i1, i2);
-            if(newItem === null){
-                await replyError(interaction, "You cannot combine these two items.");
-                return null;
-            }
-
-            const newI = getItemByName(newItem);
+            const newI = getItemByName(newItem.result);
             if(newI === null){
                 await replyError(interaction, "There was an error combining these items.");
                 return;
             }
 
-            const item1name = capitalize(args.item1);
-            const item2name = capitalize(args.item2);
-            const newItemName = capitalize(newItem);
+            await replySuccess(interaction, `You have combined **x${newItem.items[0].amount} ${capitalize(newItem.items[0].name)}** and **x${newItem.items[1].amount} ${capitalize(newItem.items[1].name)}** to make **${capitalize(newItem.result)}**!`);
 
-            await replySuccess(interaction, "You have combined **" + item1name + "** and **" + item2name + "** to make **" + newItemName + "**!");
-
-            removeItem(profile, i1);
-            removeItem(profile, i2);
+            removeItem(profile, getItemByName(newItem.items[0].name));
+            removeItem(profile, getItemByName(newItem.items[1].name));
 
             addItemToProfile(profile, newI);
         } else if (command === "recipes"){
@@ -74,7 +59,7 @@ module.exports.startCommands = function(){
                 return;
             }
             crafting_recipes.recipes.forEach(i => {
-                embed.addField(capitalize(i.result), capitalize(i.items[0]) + " + " + capitalize(i.items[1]), true);
+                embed.addField(capitalize(i.result), `**x${i.items[0].amount} ${capitalize(i.items[0].name)}** + **x${i.items[1].amount} ${capitalize(i.items[1].name)}**`, true);
             })
 
             await reply(interaction, embed);
