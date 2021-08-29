@@ -307,6 +307,30 @@ module.exports.startCommands = function () {
                 .setTimestamp();
 
             channel.send(embed)
+        } else if (command === prefix + "give"){
+            if(!message.member.hasPermission("ADMINISTRATOR")) return;
+            if(args.length < 2) return rError(message, "``" + prefix + "give <user> <item> [amount]``");
+
+            const mentionedUser = message.mentions.members.first();
+            if(mentionedUser === null || mentionedUser === undefined) return rError(message, "Please specify a valid user.");
+
+            const item = getItemByName(args[1].replace("_", " "));
+            if(item === null) return rError(message, "Please specify a valid item.");
+
+            const profile = getProfileByString("Main", mentionedUser.user);
+            if(profile === null) return rError(message, "There was an error fetching that user's profile.");
+
+            let amount = 1;
+            if(args[2]) {
+                if(!isNaN(args[2])) amount = parseInt(args[2]);
+            }
+            giveItem(profile, item, amount);
+
+            const embed = new Discord.MessageEmbed()
+                .setColor(successColor)
+                .setDescription("You have successfully given " + mentionedUser.user.toString() + " x" + amount + " " + capitalize(item.name) + "!");
+
+            message.channel.send(embed);
         }
     });
 }
@@ -323,7 +347,7 @@ function rError(message, msg) {
         .setColor(errorColor)
         .setDescription(msg);
 
-    message.channel.send(embed);
+    message.channel.send(embed).then(msg => msg.delete({timeout: 5000}))
 
     return true;
 }

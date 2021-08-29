@@ -321,7 +321,7 @@ function getPage(pageNumber, profile) {
             let sell = item.sell.toString();
             if(sell === "-1") sell = "N/A";
 
-            embed.addField("x" + pages[pageNumber][i][1] + " " + capitalize(item.name), `**Sell**: *${sell}*\n**Category**: *${capitalize(item.category)} ${getEmojiByCategory(item)}*`, true);
+            embed.addField("x" + pages[pageNumber][i][1] + " " + capitalize(item.name) + " " + getEmojiByCategory(item), `**Sell**: *${sell}*`, true);
         }
         embed.setFooter("Page " + (pageNumber+1) + " / " + maximumPages);
     }

@@ -4,165 +4,162 @@ const ytSearch = require("yt-search");
 const queue = new Map();
 
 module.exports.startCommands = function () {
-    client.ws.on("INTERACTION_CREATE", async (interaction) => {
+    client.on("message", async message => {
+        const args = message.content.split(" ").map(arg => arg.toLowerCase());
+        const command = args[0];
+        args.shift();
 
-        if (interaction.type === 3) return;
+        const prefix = musicPrefix;
 
-        const command = interaction.data.name.toLowerCase();
-        const {name, options} = interaction.data;
+        if (command === prefix + "play" || command === prefix + "skip" || command === prefix + "stop" || command === prefix + "queue") {
+            const voiceChannel = message.member.voice.channel;
+            if (!voiceChannel) return rError(message, "You need to be in a channel to execute this command.");
+            const permissions = voiceChannel.permissionsFor(message.client.user);
+            if (!permissions.has("CONNECT")) return rError(message, "You don't have the correct permissions.");
+            if (!permissions.has("SPEAK")) return rError(message, "You don't have the correct permissions.");
 
-        const guild = client.guilds.cache.get(interaction.guild_id);
-        const member = guild.members.cache.get(interaction.member.user.id);
+            const serverQueue = queue.get(message.guild.id);
 
-        const channel = guild.channels.cache.get(interaction.channel_id);
-        const user = interaction.member.user;
+            if (command === prefix + "play") {
+                if (!args.length) return rError(message, "You need to send a song title.");
+                let song = {};
 
-
-        const args = {};
-
-        if (options) {
-            for (const option of options) {
-                const {name, value} = option;
-                args[name] = value.toLowerCase();
-            }
-        }
-
-        if (command === "music") {
-            const voice_channel = member.voice.channel;
-            if (!voice_channel) {
-                await replyError(interaction, "You need to be in a voice channel.");
-                return;
-            }
-
-            const serverQueue = queue.get(guild.id);
-
-            let song = {};
-
-            if (args.function.toLowerCase() === "play") {
-                if (!args.song) {
-                    await replyError(interaction, "You must specify a song name / url.");
-                    return;
-                }
-                if (ytdl.validateURL(args.song)) {
-                    const songInfo = await ytdl.getInfo(args.song).catch(async err => {
-                        await replyError(interaction, "There was an error fetching this link.");
-                    });
-                    if (songInfo === undefined || songInfo === null) return;
-                    song = {title: songInfo.videoDetails.title, url: songInfo.videoDetails.video_url};
+                /*if (ytdl.validateURL(args[0])) {
+                    await ytdl.getInfo(args[0]).then(info => {
+                        song = {title: info.videoDetails.title, url: info.videoDetails.video_url};
+                    })
                 } else {
                     const videoFinder = async (query) => {
                         const videoResult = await ytSearch(query);
+                        console.log(videoResult.videos);
                         return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
                     }
 
-                    const video = await videoFinder(args.song);
-
+                    const video = await videoFinder(args.join(" "));
                     if (video) {
                         song = {title: video.title, url: video.url};
                     } else {
-                        await replyError(interaction, "Error finding video.");
-                        return;
+                        rError(message, "Error finding video.");
                     }
+                }*/
+
+                const videoFinder = async (query) => {
+                    const videoResult = await ytSearch(query);
+                    return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
+                }
+
+                const video = await videoFinder(args.join(" "));
+                if (video) {
+                    song = {title: video.title, url: video.url};
+                } else {
+                    rError(message, "Error finding video.");
                 }
 
                 if (!serverQueue) {
                     const queueConstructor = {
-                        voice_channel: voice_channel,
-                        text_channel: channel,
+                        voiceChannel: voiceChannel,
+                        textChannel: message.channel,
                         connection: null,
                         songs: []
                     };
 
-                    queue.set(guild.id, queueConstructor);
+                    queue.set(message.guild.id, queueConstructor);
                     queueConstructor.songs.push(song);
 
                     try {
-                        const connection = await voice_channel.join();
+                        const connection = await voiceChannel.join();
                         queueConstructor.connection = connection;
-                        await videoPlayer(guild, queueConstructor.songs[0], interaction);
-                        await replySuccess(interaction, "Started playing music.");
-                    } catch {
-                        queue.delete(guild.id);
-                        await replyError(interaction, "There was an error connecting.");
-                        return;
+                        videoPlayer(message.guild, queueConstructor.songs[0]);
+                    } catch (err) {
+                        queue.delete(message.guild.id);
+                        rError(message, "There was an error connecting.");
+                        throw err;
                     }
                 } else {
                     serverQueue.songs.push(song);
-                    await replyMusic(interaction, `🎶 **${song.title}** added to queue!`);
-                    return;
+                    return replyMusic(message, `🎶 **${song.title}** added to the queue!`);
                 }
-            } else if (args.function.toLowerCase() === "skip") skipSong(interaction, serverQueue, member);
-            else if (args.function.toLowerCase() === "stop") stopSong(interaction, serverQueue, member);
-            else if (args.function.toLowerCase() === "queue") await listQueue(interaction, serverQueue, member);
-            else await replyError(interaction, "You must specify a valid function [play, skip, stop, queue].");
+            } else if (command === prefix + "skip") await skipSong(message, serverQueue);
+            else if (command === prefix + "stop") await stopSong(message, serverQueue);
+            else if (command === prefix + "queue") await replyQueue(message, serverQueue);
         }
+    })
+
+    client.on('voiceStateUpdate', (oldState, newState) => {
+        if (oldState.channelID !==  oldState.guild.me.voice.channelID || newState.channel)
+            return;
+
+        if (!oldState.channel.members.size - 1)
+            setTimeout(() => {
+                if (!oldState.channel.members.size - 1){
+                    replyMusicFromChannel(queue.get(oldState.guild.id).textChannel, "I have left due to inactivity. (30 seconds)");
+                    queue.delete(oldState.guild.id);
+                    oldState.channel.leave();
+                }
+            }, 30*1000);
     });
 }
 
-const videoPlayer = async (guild, song, interaction) => {
-    if(interaction) await replySuccess(interaction, "Now playing music.");
-
+const videoPlayer = async (guild, song) => {
     const songQueue = queue.get(guild.id);
 
     if (!song) {
-        songQueue.voice_channel.leave();
+        songQueue.voiceChannel.leave();
         queue.delete(guild.id);
         return;
     }
     const stream = ytdl(song.url, {filter: "audioonly"});
-    songQueue.connection.play(stream, {seek: 0, volume: 0.5}).on('finish', () => {
+    songQueue.connection.play(stream, {seek: 0, volume: .5}).on('finish', () => {
         songQueue.songs.shift();
         videoPlayer(guild, songQueue.songs[0]);
     });
-    const embed = new Discord.MessageEmbed()
-        .setTitle("Quingee Music")
-        .setDescription(`🎶 Now playing **${song.title}**`)
-        .setColor(musicColor);
-    await songQueue.text_channel.send(embed);
+    await replyMusicFromChannel(songQueue.textChannel, `🎶 Now playing **${song.title}**`);
 }
 
-const skipSong = (interaction, serverQueue, member) => {
-    if (!member.voice.channel) replyError("You need to be in a channel to skip a song.");
-    if (!serverQueue) {
-        replyError(interaction, "There are no songs in the queue.");
-        return;
-    }
-    serverQueue.connection.dispatcher.end();
-    replySuccess(interaction, "Skipped the current song.");
+const skipSong = async (message, serverQueue) => {
+    if (!message.member.voice.channel) return rError(message, "You need to be in a channel to execute this command!");
+    if (!serverQueue) return rError("There is currently no queue.");
+    if (!serverQueue.songs[1]) return rError(message, "You are on the last song in your queue.");
+    serverQueue.songs.shift();
+    await videoPlayer(serverQueue.textChannel.guild, serverQueue.songs[0]);
 }
 
-const stopSong = (interaction, serverQueue, member) => {
-    if (!member.voice.channel) {
-        replyError(interaction, "You need to be in a channel to stop playing.");
-        return;
-    }
+const stopSong = async (message, serverQueue) => {
+    if (!message.member.voice.channel) return rError(message, "You need to be in a channel to execute this command!");
     serverQueue.songs = [];
     serverQueue.connection.dispatcher.end();
-    replySuccess(interaction, "Stopped all music.")
+    await replyMusicFromChannel(serverQueue.textChannel, "🎶 You have stopped all music. Cleared queue.")
 }
 
-const listQueue = async (interaction, serverQueue, member) => {
-    if(!serverQueue){
-        await replyMusic(interaction, "There are currently no songs in the queue.");
-        return;
+const replyQueue = async (message, serverQueue) => {
+    if (!message.member.voice.channel) return rError(message, "You need to be in a channel to execute this command!");
+    if (!serverQueue) return rError(message, "There are no songs in the queue.");
+    if (serverQueue.songs.length === 0) return rError(message, "There are no songs in the queue.");
+    let songList = "";
+    for (let i = 0; i < serverQueue.songs.length; i++) {
+        songList += `${i + 1}. **${serverQueue.songs[i].title}** ([Link](${serverQueue.songs[i].url}))\n\n`;
     }
-
-    const embed = new Discord.MessageEmbed()
-        .setTitle("Quingee Music")
-        .setDescription("All songs currently in the queue.")
-        .setColor(musicColor);
-
-    for(let i = 0; i < serverQueue.songs.length; i++){
-        embed.addField(serverQueue.songs[i].title, serverQueue.songs[i].url);
-    }
-
-    await reply(interaction, embed);
+    await replyMusicFromChannel(serverQueue.textChannel, songList);
 }
 
-const replyMusic = async (interaction, response) => {
+function rError(message, msg) {
+    const embed = new Discord.MessageEmbed()
+        .setColor(errorColor)
+        .setDescription(msg);
+    message.channel.send(embed).then(msg => msg.delete({timeout: 5000}))
+    return true;
+}
+
+const replyMusicFromChannel = async (channel, msg) => {
     const embed = new Discord.MessageEmbed()
         .setTitle("Quingee Music")
-        .setDescription(response)
+        .setDescription(msg)
         .setColor(musicColor);
-    await reply(interaction, embed);
+    channel.send(embed);
+    return true;
+}
+
+const replyMusic = async (message, msg) => {
+    await replyMusicFromChannel(message.channel, msg);
+    return true;
 }

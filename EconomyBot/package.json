@@ -10,16 +10,19 @@
     "type": "git",
     "url": "git+https://github.com/NomadApplications/QuigeeBot.git"
   },
-  "author": "",
+  "author": "Nomad Applications",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/NomadApplications/QuigeeBot/issues"
   },
   "homepage": "https://github.com/NomadApplications/QuigeeBot#readme",
   "dependencies": {
-    "discord-buttons": "^3.1.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
-    "quick.db": "^7.1.3"
+    "quick.db": "^7.1.3",
+    "node-schedule": "^2.0.0",
+    "moment": "^2.29.1",
+    "ytdl-core": "^4.9.1",
+    "ytsearch": "^1.0.4"
   }
 }

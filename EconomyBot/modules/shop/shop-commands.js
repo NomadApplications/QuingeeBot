@@ -215,7 +215,7 @@ module.exports.startCommands = async function () {
             removeCurrency(profile1, amount);
             addCurrency(profile2, amount);
 
-            await replySuccess(interaction, "You have successfully transferred **$" + amount + "** from **" + profile1.title + "** to **" + profile2.title + "**.");
+            await replySuccess(interaction, "You have successfully transferred **" + moneyPrefix + " " + amount + "** from **" + profile1.title + "** to **" + profile2.title + "**.");
         } else if (command === "itemtransfer"){
             const profile1 = getProfileByString(args.profile1, user);
             const profile2 = getProfileByString(args.profile2, user);

@@ -90,7 +90,7 @@ global.economy_slash_commands = require("../modules/economy/slashcommands");
 
 // MUSIC
 
-global.music_slash_commands = require("../modules/music/slashcommands");
+global.musicPrefix = config.musicPrefix;
 global.music_commands = require("../modules/music/music-commands");
 
 // IDs

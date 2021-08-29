@@ -91,6 +91,7 @@ module.exports.init = async function(){
                 moderationCommands.push(new CommandInfo("lock", "Locks a channel.", []));
                 moderationCommands.push(new CommandInfo("unlock", "Unlocks a channel.", []));
                 moderationCommands.push(new CommandInfo("purge", "Mass delete messages.", [new CommandParam("amount", true)]));
+                moderationCommands.push(new CommandInfo("give", "Give an item to a user.", [new CommandParam("user", true), new CommandParam("item", true), new CommandParam("amount", false)]));
 
                 const moderationCommandString = getModCommandInfo(moderationCommands);
 

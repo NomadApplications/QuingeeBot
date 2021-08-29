@@ -41,10 +41,29 @@ module.exports.startCommands = function(){
                 return;
             }
 
-            await replySuccess(interaction, `You have combined **x${newItem.items[0].amount} ${capitalize(newItem.items[0].name)}** and **x${newItem.items[1].amount} ${capitalize(newItem.items[1].name)}** to make **${capitalize(newItem.result)}**!`);
+            let combinedString = "";
+            for(let i = 0; i < newItem.items.length; i++){
+                const item = newItem.items[i];
+                if(i === newItem.items.length - 1){
+                    combinedString += `and **x${item.amount} ${capitalize(item.name)}**`;
+                } else {
+                    let n = `**x${item.amount} ${capitalize(item.name)}**`;
+                    if(i === newItem.items.length - 2){
+                        n += " ";
+                    } else {
+                        n += ", ";
+                    }
+                    combinedString += n;
+                }
+            }
 
-            removeItem(profile, getItemByName(newItem.items[0].name));
-            removeItem(profile, getItemByName(newItem.items[1].name));
+            await replySuccess(interaction, `You have combined ${combinedString} to make **${capitalize(newItem.result)}**!`);
+
+            for(let i = 0; i < newItem.items.length; i++) {
+                for(let j = 0; j < newItem.items[i].amount; j++){
+                    removeItem(profile, getItemByName(newItem.items[i].name));
+                }
+            }
 
             addItemToProfile(profile, newI);
         } else if (command === "recipes"){

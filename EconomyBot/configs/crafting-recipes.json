@@ -9,6 +9,10 @@
         {
           "name": "iron",
           "amount": 1
+        },
+        {
+          "name": "clay",
+          "amount": 3
         }
       ],
       "result": "forge"

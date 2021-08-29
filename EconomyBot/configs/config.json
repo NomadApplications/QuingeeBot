@@ -1,5 +1,6 @@
 {
   "moderationPrefix": "?",
+  "musicPrefix": ">",
   "websiteURL": "<https://google.com/>",
   "colors": {
     "successColor": "#4be045",
